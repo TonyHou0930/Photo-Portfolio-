@@ -1,0 +1,178 @@
+{
+  "defaultMusic": "",
+  "defaultMusicTitle": "",
+  "defaultMusicArtist": "",
+  "projects": [
+    {
+      "id": "eur",
+      "dir": "eur",
+      "title": "European Life",
+      "story": "A visual chronicle capturing the grand symmetry of European landscapes and the intimate micro-stories found within its old-world streets.",
+      "cover": "IMG_9752.webp",
+      "location": "Europe",
+      "year": "2025",
+      "tags": [
+        "Landscape",
+        "Street",
+        "Travel"
+      ],
+      "music": "",
+      "musicTitle": "",
+      "musicArtist": "",
+      "photos": [
+        {
+          "file": "IMG_9752.webp",
+          "originalFile": "IMG_9752.JPG",
+          "title": "Confetti Skies",
+          "featured": true,
+          "location": "Grindelwald, Switzerland",
+          "year": "2025",
+          "camera": "Canon EOS 6D",
+          "focalLength": "70mm",
+          "aperture": "f/11.0",
+          "shutterSpeed": "1/350s",
+          "iso": "ISO 100",
+          "tags": [
+            "paragliding",
+            "sky",
+            "valley"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAACQBACdASoUABQAPzmSwFmvKaajqAgB4CcJQBOmaYgfxxRMY0BhGcMdmpwuTAAAa6b9DmbszvUbj0xo8ckCCtVBQXNUIySybGxY+h17jAMQ4F1noK4T83Quxt3XZlNThUqj1Sk9VIpt9YqmIvK94jL4Ecm0F/Dk4mDOAAAA"
+        },
+        {
+          "file": "IMG_9757.webp",
+          "originalFile": "IMG_9757.JPG",
+          "title": "Swiss-Flavored Sky",
+          "featured": true,
+          "location": "Grindelwald, Switzerland",
+          "year": "2025",
+          "camera": "Canon EOS 6D",
+          "focalLength": "70mm",
+          "aperture": "f/9.5",
+          "shutterSpeed": "1/350s",
+          "iso": "ISO 100",
+          "tags": [
+            "mountain",
+            "paragliding",
+            "clouds"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAAAwBACdASoUABQAPzmKulWvKSWjKA1R4CcJaAC06Arv/qaQpKgR3tUnGAAA5lFqStO8Bg73LxrRhO8e9oGNC1h7inI7svd7G+q+h9l9aNoI7JLctTIRiucQalqyNLDKBKnNXoJiCKZiASXz3GgnK8ulLtySAAAA"
+        },
+        {
+          "file": "IMG_9766.webp",
+          "originalFile": "IMG_9766.JPG",
+          "title": "Chillin' On Jungfrau Ice",
+          "featured": true,
+          "location": "Jungfrau Region, Switzerland",
+          "year": "2025",
+          "camera": "Canon EOS 6D",
+          "focalLength": "200mm",
+          "aperture": "f/9.5",
+          "shutterSpeed": "1/350s",
+          "iso": "ISO 100",
+          "tags": [
+            "glacier",
+            "paragliding",
+            "snow"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAACwAwCdASoUABQAPzmOuVcvKaUjqA1R4CcJYgCw7AEGVvjgVcdUQAD+jUHXFSqcWdDeXmp2Ut52D+eY9PQ0uvX53wkvOxQkFiTTOI/azbxBWb1sI1D68jJ2OrXF1faZJ4tkwBrskdNwiAZzXbxzGeQAAAA="
+        },
+        {
+          "file": "IMG_9789.webp",
+          "originalFile": "IMG_9789.JPG",
+          "title": "Jungfrau's White Frosting",
+          "featured": true,
+          "location": "Jungfrau, Switzerland",
+          "year": "2025",
+          "camera": "Canon EOS 6D",
+          "focalLength": "123mm",
+          "aperture": "f/8.0",
+          "shutterSpeed": "1/350s",
+          "iso": "ISO 100",
+          "tags": [
+            "mountain",
+            "glacier",
+            "peak"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAACwBACdASoUABQAPzmSv1mvKaajqAgB4CcJQBdgAbtOE+0olWidkyxCqsAUwHQAAP3wNMkGnH2j9cEXhdvHh0XUOECcJDRPYDgxAg42Ttg8n5g5lBV7F4GWczxh3YXCiw3CQ8+XRBNtwi9jYtE56uL7U46Ej4WLo2Pmh+AAAAA="
+        },
+        {
+          "file": "L1090688.webp",
+          "originalFile": "L1090688.JPG",
+          "title": "Golden Hour Gothic",
+          "featured": true,
+          "location": "Strasbourg, France",
+          "year": "2025",
+          "camera": "LEICA Q (Typ 116)",
+          "focalLength": "28mm",
+          "aperture": "f/10.0",
+          "shutterSpeed": "1/60s",
+          "iso": "ISO 800",
+          "tags": [
+            "cathedral",
+            "sunset",
+            "gothic"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAACQBQCdASoUABQAPzmUwVmvKicjqAgB4CcJbACdMuLKGA/HGVa1r5Rw/G35C2HAPkoIB0nKAAD+3abL/V1bLlpL5fkIyMLBcYGp2b9lUDEzdt88AlOIdMoNGhjQTMMMrW5zL8bCdm8+ZEpxm2HIR/uI74Lxb5k5nq+/qGfA+upY/0uRO37JIR1Nm1/vAAAA"
+        },
+        {
+          "file": "L1090703.webp",
+          "originalFile": "L1090703.JPG",
+          "title": "Gothic Silhouette",
+          "featured": true,
+          "location": "Strasbourg, France",
+          "year": "2025",
+          "camera": "LEICA Q (Typ 116)",
+          "focalLength": "28mm",
+          "aperture": "f/5.6",
+          "shutterSpeed": "1/60s",
+          "iso": "ISO 800",
+          "tags": [
+            "cathedral",
+            "architecture",
+            "shadow"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAADwBACdASoUABQAPzmSv1mvKaajqAgB4CcJZwDOdBGzQYBo2u6VwJGf87ifIxFzIpAA/sN1G+YYXQyRRklbPj4SvWAObX07qSdYYA+o+EEK9Iwh6ija7TCm2hoGjPIsL+KGRTWXcfE54K6qDM2ETypGiGLydNBskD4AAA=="
+        }
+      ]
+    },
+    {
+      "id": "jap",
+      "dir": "jap",
+      "title": "Japan Life",
+      "story": "Documenting the midnight hues and transient street narratives across Japan's historic quarters.",
+      "cover": "L1090919.webp",
+      "location": "Kyoto, Japan",
+      "year": "2026",
+      "tags": [
+        "Street",
+        "Nightscape",
+        "Travel"
+      ],
+      "music": "",
+      "musicTitle": "",
+      "musicArtist": "",
+      "photos": [
+        {
+          "file": "L1090919.webp",
+          "originalFile": "L1090919.JPG",
+          "title": "Neon Ramen Hunt",
+          "featured": true,
+          "location": "Kyoto, Japan",
+          "year": "2026",
+          "camera": "LEICA Q (Typ 116)",
+          "focalLength": "28mm",
+          "aperture": "f/2.5",
+          "shutterSpeed": "1/125s",
+          "iso": "ISO 400",
+          "tags": [
+            "kyoto",
+            "nightscape",
+            "neon-sign"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAAAwBACdASoUABQAPzmSv1mvKaajqAgB4CcJZwAAIEBYwHd7/r+bjpTaoIAA/uv9CAbVsgjMpU6HxKNXmpG+NqFQarwj04tuvpWcOSTpMWlM1aaLV/3qSCuvzgHy+D8ejecOqAuUw6/RGPu9W4nEI0SqerfaLuhMeA2CAAAA"
+        }
+      ]
+    }
+  ]
+}
