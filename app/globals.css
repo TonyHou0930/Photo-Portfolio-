@@ -180,14 +180,13 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 .mp-album{width:16px;height:16px;border-radius:50%;object-fit:cover;display:block}
 
 /* ═══ RESPONSIVE ═══ */
-.gallery-columns{columns:2;column-gap:14px;padding:14px}
-.gallery-columns{columns:1;column-gap:0;padding:10px}
+
 
 /* Tablet (iPad) */
 @media (max-width:1024px) {
   .sidebar{position:fixed;left:0;top:0;height:100%;z-index:100;box-shadow:4px 0 20px rgba(0,0,0,.5)}
   .sidebar.off{margin-left:0;transform:translateX(-100%)}
-  .gallery{columns:2;column-gap:14px;padding:14px}
+  .gallery-columns{columns:2;column-gap:14px;padding:14px}
   .lb-layout{flex-direction:column;height:auto;max-height:92vh}
   .lb-photo-area{max-height:55vh}
   .lb-photo-area img{max-height:55vh}
@@ -200,7 +199,7 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 /* Mobile */
 @media (max-width:640px) {
   .sidebar{width:260px}
-  .gallery{columns:1;column-gap:0;padding:10px}
+  .gallery-columns{columns:1;column-gap:0;padding:10px}
   .photo-card{padding:6px}
   .topbar{padding:0 10px;gap:6px}
   .tb-path{font-size:8px}
