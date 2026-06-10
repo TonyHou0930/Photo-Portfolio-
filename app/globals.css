@@ -168,8 +168,10 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 .blur-wrap{position:relative;overflow:hidden;width:100%;height:100%}
 .blur-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(12px);transform:scale(1.1);transition:opacity .6s ease;z-index:1}
 .blur-bg.out{opacity:0}
-.real-img{width:100%;display:block;opacity:0;transition:opacity .6s ease}
+.real-img{width:100%;display:block;opacity:0;transition:opacity .6s ease;min-height:150px}
+.real-img.in{opacity:1;min-height:0}
 .real-img.in{opacity:1}
+
 
 /* ═══ SPOTIFY ALBUM ART ═══ */
 .mp-album{width:16px;height:16px;border-radius:50%;object-fit:cover;display:block}
