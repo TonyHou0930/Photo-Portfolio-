@@ -206,6 +206,43 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
           s.mouseGX = -9999; s.mouseGY = -9999;
           tipRef.current?.classList.remove('on');
         }}
+        onTouchStart={e => {
+          const t = e.touches[0];
+          const rect = canvasRef.current!.getBoundingClientRect();
+          const mx = t.clientX - rect.left, my = t.clientY - rect.top;
+          const s = state.current;
+          const n = getN(mx, my);
+          s.mouseDownPos = { x: mx, y: my };
+          if (!n) {
+            s.isPanning = true; s.panStartX = mx; s.panStartY = my;
+            s.panStartPX = s.panX; s.panStartPY = s.panY;
+          }
+        }}
+        onTouchMove={e => {
+          const t = e.touches[0];
+          const rect = canvasRef.current!.getBoundingClientRect();
+          const mx = t.clientX - rect.left, my = t.clientY - rect.top;
+          const s = state.current;
+          if (s.isPanning) {
+            s.panX = s.panStartPX + (mx - s.panStartX);
+            s.panY = s.panStartPY + (my - s.panStartY);
+          }
+        }}
+        onTouchEnd={e => {
+          const s = state.current;
+          if (s.mouseDownPos) {
+            const t = e.changedTouches[0];
+            const rect = canvasRef.current!.getBoundingClientRect();
+            const mx = t.clientX - rect.left, my = t.clientY - rect.top;
+            const wasDrag = Math.hypot(mx - s.mouseDownPos.x, my - s.mouseDownPos.y) > 10;
+            if (!wasDrag) {
+              const n = getN(mx, my);
+              if (n?.type === 'photo') onClickPhoto(n.id.replace('p:', ''));
+              if ((n?.type === 'cat' || n?.type === 'color-group') && n.cat) onClickCat(n.cat);
+            }
+          }
+          s.isPanning = false; s.mouseDownPos = null;
+        }}
       />
       <div ref={tipRef} className="graph-tip"><div className="gt-t" /><div className="gt-tg" /></div>
     </div>
