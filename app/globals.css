@@ -40,9 +40,10 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 .view-wrap{flex:1;position:relative;overflow:hidden}
 
 /* ═══ GALLERY ═══ */
-.gallery{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding:16px;columns:3;column-gap:16px;column-fill:auto;background:var(--bg);transition:opacity .4s}
-.gallery::-webkit-scrollbar{display:none}
-.gallery.off{opacity:0;pointer-events:none}
+.gallery-scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;background:var(--bg);transition:opacity .4s}
+.gallery-scroll::-webkit-scrollbar{display:none}
+.gallery-scroll.off{opacity:0;pointer-events:none}
+.gallery-columns{padding:16px;columns:3;column-gap:16px}
 
 /* Project cluster */
 .photo-card-wrap{break-inside:avoid;margin-bottom:20px}
@@ -179,6 +180,8 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 .mp-album{width:16px;height:16px;border-radius:50%;object-fit:cover;display:block}
 
 /* ═══ RESPONSIVE ═══ */
+.gallery-columns{columns:2;column-gap:14px;padding:14px}
+.gallery-columns{columns:1;column-gap:0;padding:10px}
 
 /* Tablet (iPad) */
 @media (max-width:1024px) {
