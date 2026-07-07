@@ -47,7 +47,6 @@ export default function Home() {
     return { src: data.defaultMusic || '', title: data.defaultMusicTitle || '', artist: data.defaultMusicArtist || '' };
   }, [deckProject, data]);
 
-  // Open split-deck for a project
   const openDeck = useCallback((projectIdOrTitle: string) => {
     const proj = projects.find(p => p.id === projectIdOrTitle || p.title === projectIdOrTitle);
     if (proj) { setDeckProject(proj); setSbOff(true); }
@@ -62,7 +61,15 @@ export default function Home() {
     setDeckProject(null); setSbOff(false); setFilter({ type: 'all', value: 'all' });
   }, []);
 
-  // Graph: click category node → open Split-Deck
+  // ── Logo click: full reset back to photo home ──
+  const goHome = useCallback(() => {
+    setDeckProject(null);
+    setLbFile(null);
+    setView('gallery');
+    setFilter({ type: 'all', value: 'all' });
+    setSbOff(false);
+  }, []);
+
   const onGraphCatClick = useCallback((cat: string) => {
     const proj = projects.find(p => p.title === cat);
     if (proj) { openDeck(proj.id); }
@@ -83,7 +90,7 @@ export default function Home() {
     <div className="shell">
       {!deckProject && (
         <Sidebar collapsed={sbOff} projects={projects} allPhotos={allPhotos}
-          filter={filter} onFilter={handleFilter} />
+          filter={filter} onFilter={handleFilter} onHome={goHome} />
       )}
 
       <div className="main-area">

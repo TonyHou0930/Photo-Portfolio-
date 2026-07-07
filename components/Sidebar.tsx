@@ -3,33 +3,31 @@ import { Project, FlatPhoto } from '@/lib/data';
 
 type Filter = { type: string; value: string };
 
-export default function Sidebar({ collapsed, projects, allPhotos, filter, onFilter }: {
+export default function Sidebar({ collapsed, projects, allPhotos, filter, onFilter, onHome }: {
   collapsed: boolean; projects: Project[]; allPhotos: FlatPhoto[];
   filter: Filter;
   onFilter: (f: Filter) => void;
+  onHome: () => void;
 }) {
   const total = allPhotos.length;
   const act = (t: string, v: string) => filter.type === t && filter.value === v;
 
-  // Categories
   const categories = new Map<string, number>();
   allPhotos.forEach(p => { if (p.category) categories.set(p.category, (categories.get(p.category) || 0) + 1); });
 
-  // Locations
   const locations = new Map<string, number>();
   allPhotos.forEach(p => { if (p.location) locations.set(p.location, (locations.get(p.location) || 0) + 1); });
 
-  // Tags
   const tags = new Map<string, number>();
   allPhotos.forEach(p => p.tags.forEach(t => tags.set(t, (tags.get(t) || 0) + 1)));
   const sortedTags = Array.from(tags.entries()).sort((a, b) => b[1] - a[1]);
 
-  // Stories (projects with story text)
   const withStory = projects.filter(p => p.story);
 
   return (
     <div className={`sidebar${collapsed ? ' off' : ''}`}>
-      <div className="sb-head">
+      {/* Logo — click to return home */}
+      <div className="sb-head sb-home" onClick={onHome} title="Back to home">
         <div className="sb-logo">Portfolio</div>
         <div className="sb-name">TonyHOU</div>
         <div className="sb-role">Photographer</div>

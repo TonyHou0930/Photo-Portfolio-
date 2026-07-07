@@ -12,7 +12,6 @@ export interface GEdge { a: string; b: string; type: 'cat' | 'tag' | 'location' 
 
 const LOC_COLOR = '#e0a050';
 
-// ── Color helpers ──────────────────────────────────────────────
 function hexToHsl(hex: string): [number, number, number] {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
   const g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -30,12 +29,9 @@ function hexToHsl(hex: string): [number, number, number] {
 }
 
 function colorGroupName(h: number): string {
-  if (h < 30) return 'Warm Reds';
-  if (h < 60) return 'Golden Tones';
-  if (h < 120) return 'Greens';
-  if (h < 180) return 'Teals';
-  if (h < 240) return 'Blues';
-  if (h < 300) return 'Purples';
+  if (h < 30) return 'Warm Reds'; if (h < 60) return 'Golden Tones';
+  if (h < 120) return 'Greens'; if (h < 180) return 'Teals';
+  if (h < 240) return 'Blues'; if (h < 300) return 'Purples';
   return 'Warm Reds';
 }
 
@@ -44,7 +40,6 @@ const COLOR_GROUP_COLORS: Record<string, string> = {
   'Teals': '#4ab8b8', 'Blues': '#5080d0', 'Purples': '#9060c0',
 };
 
-// ── BUILD GRAPH ────────────────────────────────────────────────
 export function buildGraph(
   photos: FlatPhoto[], w: number, h: number, mode: GraphMode,
   extractedColors?: Map<string, string>
@@ -54,7 +49,7 @@ export function buildGraph(
   return buildNormalGraph(photos, w, h);
 }
 
-// ── NORMAL MODE ────────────────────────────────────────────────
+// ── NORMAL MODE — concentric rings ─────────────────────────────
 function buildNormalGraph(photos: FlatPhoto[], w: number, h: number): { nodes: GNode[]; edges: GEdge[] } {
   const cx = w / 2, cy = h / 2;
   const nodes: GNode[] = [], edges: GEdge[] = [];
@@ -68,41 +63,80 @@ function buildNormalGraph(photos: FlatPhoto[], w: number, h: number): { nodes: G
   const cats = Array.from(catSet), locs = Array.from(locSet);
   const usedTags = Array.from(tagSet).filter(t => !catSet.has(t) && !locSet.has(t));
 
-  const bigNodes = [...cats.map(c => ({ k: c })), ...locs.map(l => ({ k: l }))];
-  const centers: Record<string, { x: number; y: number }> = {};
-  bigNodes.forEach((bn, i) => {
-    const a = (i / bigNodes.length) * Math.PI * 2 - Math.PI / 2;
-    const r = Math.min(w, h) * 0.42;
-    centers[bn.k] = { x: cx + Math.cos(a) * r, y: cy + Math.sin(a) * r };
+  // ── Layer 1: Categories on inner ring ──
+  const catRadius = Math.min(w, h) * 0.18;
+  const catCenters: Record<string, { x: number; y: number; angle: number }> = {};
+  cats.forEach((cat, i) => {
+    const a = (i / cats.length) * Math.PI * 2 - Math.PI / 2;
+    const x = cx + Math.cos(a) * catRadius;
+    const y = cy + Math.sin(a) * catRadius;
+    catCenters[cat] = { x, y, angle: a };
+    nodes.push({ id: 'c:' + cat, x, y, gx: x, gy: y, r: 8, label: cat, type: 'cat', cat, vx: 0, vy: 0 });
+  });
+
+  // ── Layer 2: Photos on middle ring, clustered around their category ──
+  const photoRadius = Math.min(w, h) * 0.32;
+  const catPhotos: Record<string, FlatPhoto[]> = {};
+  photos.forEach(p => {
+    const c = p.category || 'default';
+    if (!catPhotos[c]) catPhotos[c] = [];
+    catPhotos[c].push(p);
   });
 
   cats.forEach(cat => {
-    const cc = centers[cat];
-    nodes.push({ id: 'c:' + cat, x: cc.x, y: cc.y, gx: cc.x, gy: cc.y, r: 16, label: cat, type: 'cat', cat, vx: 0, vy: 0 });
+    const cc = catCenters[cat];
+    const group = catPhotos[cat] || [];
+    const arcSpan = (group.length / Math.max(photos.length, 1)) * Math.PI * 2;
+    const startAngle = cc.angle - arcSpan / 2;
+
+    group.forEach((p, i) => {
+      const a = group.length === 1
+        ? cc.angle
+        : startAngle + (i / (group.length - 1)) * arcSpan;
+      const jitter = (Math.random() - 0.5) * 20;
+      const r = photoRadius + jitter;
+      const px = cx + Math.cos(a) * r;
+      const py = cy + Math.sin(a) * r;
+      nodes.push({ id: 'p:' + p.file, x: px, y: py, gx: px, gy: py, r: 4, label: p.title, type: 'photo', cat: p.category, tags: p.tags, photoUrl: p.url, year: p.year, vx: 0, vy: 0 });
+      edges.push({ a: 'c:' + cat, b: 'p:' + p.file, type: 'cat' });
+      if (p.location) edges.push({ a: 'l:' + p.location, b: 'p:' + p.file, type: 'location' });
+    });
   });
+
+  // ── Layer 3: Locations between their photos and category ──
   locs.forEach(loc => {
-    const cc = centers[loc];
-    nodes.push({ id: 'l:' + loc, x: cc.x, y: cc.y, gx: cc.x, gy: cc.y, r: 12, label: loc, type: 'location', vx: 0, vy: 0 });
+    const locPhotos = photos.filter(p => p.location === loc);
+    if (!locPhotos.length) return;
+    let ax = 0, ay = 0, cnt = 0;
+    locPhotos.forEach(p => {
+      const n = nodes.find(nn => nn.id === 'p:' + p.file);
+      if (n) { ax += n.x; ay += n.y; cnt++; }
+    });
+    if (!cnt) return;
+    ax /= cnt; ay /= cnt;
+    const midR = (catRadius + photoRadius) / 2;
+    const ang = Math.atan2(ay - cy, ax - cx);
+    const lx = cx + Math.cos(ang) * midR;
+    const ly = cy + Math.sin(ang) * midR;
+    nodes.push({ id: 'l:' + loc, x: lx, y: ly, gx: lx, gy: ly, r: 5, label: loc, type: 'location', vx: 0, vy: 0 });
   });
 
-  photos.forEach(p => {
-    const cc = centers[p.category] || { x: cx, y: cy };
-    const a = Math.random() * Math.PI * 2, r2 = 80 + Math.random() * 130;
-    const px = cc.x + Math.cos(a) * r2, py = cc.y + Math.sin(a) * r2;
-    nodes.push({ id: 'p:' + p.file, x: px, y: py, gx: px, gy: py, r: 6, label: p.title, type: 'photo', cat: p.category, tags: p.tags, photoUrl: p.url, year: p.year, vx: 0, vy: 0 });
-    if (p.category) edges.push({ a: 'c:' + p.category, b: 'p:' + p.file, type: 'cat' });
-    if (p.location) edges.push({ a: 'l:' + p.location, b: 'p:' + p.file, type: 'location' });
-  });
-
+  // ── Layer 4: Tags on outer ring ──
+  const tagRadius = Math.min(w, h) * 0.42;
   usedTags.forEach(tag => {
     const owners = photos.filter(p => p.tags.includes(tag));
     if (!owners.length) return;
-    let ax = 0, ay = 0;
-    owners.forEach(p => { const cc = centers[p.category] || { x: cx, y: cy }; ax += cc.x; ay += cc.y; });
-    ax /= owners.length; ay /= owners.length;
-    const off = 50 + Math.random() * 70, oa = Math.random() * Math.PI * 2;
-    const tx = ax + Math.cos(oa) * off, ty = ay + Math.sin(oa) * off;
-    nodes.push({ id: 't:' + tag, x: tx, y: ty, gx: tx, gy: ty, r: 3, label: '#' + tag, type: 'tag', vx: 0, vy: 0 });
+    let avgAngle = 0, cnt = 0;
+    owners.forEach(p => {
+      const n = nodes.find(nn => nn.id === 'p:' + p.file);
+      if (n) { avgAngle += Math.atan2(n.y - cy, n.x - cx); cnt++; }
+    });
+    if (!cnt) return;
+    avgAngle /= cnt;
+    const jitter = (Math.random() - 0.5) * 0.3;
+    const tx = cx + Math.cos(avgAngle + jitter) * (tagRadius + Math.random() * 15);
+    const ty = cy + Math.sin(avgAngle + jitter) * (tagRadius + Math.random() * 15);
+    nodes.push({ id: 't:' + tag, x: tx, y: ty, gx: tx, gy: ty, r: 2, label: '#' + tag, type: 'tag', vx: 0, vy: 0 });
     owners.forEach(p => edges.push({ a: 'p:' + p.file, b: 't:' + tag, type: 'tag' }));
   });
 
@@ -110,14 +144,9 @@ function buildNormalGraph(photos: FlatPhoto[], w: number, h: number): { nodes: G
 }
 
 // ── COLOR MODE ─────────────────────────────────────────────────
-function buildColorGraph(
-  photos: FlatPhoto[], w: number, h: number,
-  extractedColors?: Map<string, string>
-): { nodes: GNode[]; edges: GEdge[] } {
+function buildColorGraph(photos: FlatPhoto[], w: number, h: number, extractedColors?: Map<string, string>): { nodes: GNode[]; edges: GEdge[] } {
   const cx = w / 2, cy = h / 2;
   const nodes: GNode[] = [], edges: GEdge[] = [];
-
-  // Group photos by color
   const groups = new Map<string, FlatPhoto[]>();
   photos.forEach(p => {
     const hex = extractedColors?.get(p.file) || '#888888';
@@ -126,25 +155,20 @@ function buildColorGraph(
     if (!groups.has(group)) groups.set(group, []);
     groups.get(group)!.push(p);
   });
-
   const groupArr = Array.from(groups.entries());
   groupArr.forEach(([group, gPhotos], i) => {
     const a = (i / groupArr.length) * Math.PI * 2 - Math.PI / 2;
-    const r = Math.min(w, h) * 0.35;
+    const r = Math.min(w, h) * 0.25;
     const gx = cx + Math.cos(a) * r, gy = cy + Math.sin(a) * r;
     const gc = COLOR_GROUP_COLORS[group] || '#888';
-
-    nodes.push({ id: 'cg:' + group, x: gx, y: gy, gx, gy, r: 14, label: group, type: 'color-group', dominantColor: gc, vx: 0, vy: 0 });
-
-    gPhotos.forEach(p => {
-      const pa = Math.random() * Math.PI * 2, pr = 50 + Math.random() * 90;
-      const px = gx + Math.cos(pa) * pr, py = gy + Math.sin(pa) * pr;
-      const col = extractedColors?.get(p.file) || gc;
-      nodes.push({ id: 'p:' + p.file, x: px, y: py, gx: px, gy: py, r: 6, label: p.title, type: 'photo', dominantColor: col, photoUrl: p.url, vx: 0, vy: 0 });
+    nodes.push({ id: 'cg:' + group, x: gx, y: gy, gx, gy, r: 8, label: group, type: 'color-group', dominantColor: gc, vx: 0, vy: 0 });
+    const ga = Math.PI * (3 - Math.sqrt(5));
+    gPhotos.forEach((p, j) => {
+      const pa = j * ga, pr = 35 + (j % 4) * 20;
+      nodes.push({ id: 'p:' + p.file, x: gx + Math.cos(pa) * pr, y: gy + Math.sin(pa) * pr, gx: gx + Math.cos(pa) * pr, gy: gy + Math.sin(pa) * pr, r: 4, label: p.title, type: 'photo', dominantColor: extractedColors?.get(p.file) || gc, photoUrl: p.url, vx: 0, vy: 0 });
       edges.push({ a: 'cg:' + group, b: 'p:' + p.file, type: 'color' });
     });
   });
-
   return { nodes, edges };
 }
 
@@ -152,31 +176,19 @@ function buildColorGraph(
 function buildTimeline(photos: FlatPhoto[], w: number, h: number): { nodes: GNode[]; edges: GEdge[] } {
   const nodes: GNode[] = [], edges: GEdge[] = [];
   const sorted = [...photos].sort((a, b) => (a.year || '0').localeCompare(b.year || '0'));
-  const margin = 80;
-  const usableW = w - margin * 2;
-
+  const margin = 80, usableW = w - margin * 2;
   sorted.forEach((p, i) => {
     const x = margin + (i / Math.max(sorted.length - 1, 1)) * usableW;
     const y = h / 2 + (Math.sin(i * 0.7) * h * 0.15);
-    const c = getCatColor(p.category || '');
-    nodes.push({ id: 'p:' + p.file, x, y, gx: x, gy: y, r: 7, label: p.title, type: 'photo', cat: p.category, tags: p.tags, photoUrl: p.url, year: p.year, vx: 0, vy: 0 });
-
-    if (i > 0) {
-      edges.push({ a: 'p:' + sorted[i - 1].file, b: 'p:' + p.file, type: 'cat' });
-    }
+    nodes.push({ id: 'p:' + p.file, x, y, gx: x, gy: y, r: 5, label: p.title, type: 'photo', cat: p.category, tags: p.tags, photoUrl: p.url, year: p.year, vx: 0, vy: 0 });
+    if (i > 0) edges.push({ a: 'p:' + sorted[i - 1].file, b: 'p:' + p.file, type: 'cat' });
   });
-
-  // Year markers
   const years = [...new Set(sorted.map(p => p.year).filter(Boolean))];
   years.forEach(yr => {
-    const yPhotos = sorted.filter(p => p.year === yr);
-    const avgX = yPhotos.reduce((s, p) => {
-      const n = nodes.find(nn => nn.id === 'p:' + p.file);
-      return s + (n?.x || 0);
-    }, 0) / yPhotos.length;
-    nodes.push({ id: 'yr:' + yr, x: avgX, y: h / 2 - h * 0.28, gx: avgX, gy: h / 2 - h * 0.28, r: 10, label: yr!, type: 'cat', vx: 0, vy: 0 });
+    const yp = sorted.filter(p => p.year === yr);
+    const avgX = yp.reduce((s, p) => s + (nodes.find(n => n.id === 'p:' + p.file)?.x || 0), 0) / yp.length;
+    nodes.push({ id: 'yr:' + yr, x: avgX, y: h / 2 - h * 0.28, gx: avgX, gy: h / 2 - h * 0.28, r: 6, label: yr!, type: 'cat', vx: 0, vy: 0 });
   });
-
   return { nodes, edges };
 }
 
@@ -187,38 +199,44 @@ export function simulate(
 ) {
   for (let i = 0; i < nodes.length; i++) {
     const n = nodes[i];
-    n.vx += (n.gx - n.x) * .03;
-    n.vy += (n.gy - n.y) * .03;
+    n.vx += (n.gx - n.x) * .025;
+    n.vy += (n.gy - n.y) * .025;
 
-    // Magnetic hover — nodes slightly attracted to mouse
     if (mouseGX !== undefined && mouseGY !== undefined) {
       const dx = mouseGX - n.x, dy = mouseGY - n.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 120 && dist > 5 && n.type === 'photo') {
-        const force = (120 - dist) * 0.0004;
-        n.vx += dx * force;
-        n.vy += dy * force;
+      if (dist < 100 && dist > 5 && n.type === 'photo') {
+        n.vx += dx / dist * 0.3;
+        n.vy += dy / dist * 0.3;
       }
     }
 
     for (let j = i + 1; j < nodes.length; j++) {
-      const m = nodes[j], dx = n.x - m.x, dy = n.y - m.y, d = Math.sqrt(dx * dx + dy * dy) || .1;
-      const minD = (n.r + m.r) * 4.5 + 55;
+      const m = nodes[j];
+      const dx = n.x - m.x, dy = n.y - m.y;
+      const d = Math.sqrt(dx * dx + dy * dy) || .1;
+      const minD = (n.r + m.r) * 3 + 18;
       if (d < minD) {
-        const f = (minD - d) * .045;
+        const f = (minD - d) * .04;
         n.vx += dx / d * f; n.vy += dy / d * f;
         m.vx -= dx / d * f; m.vy -= dy / d * f;
       }
     }
-    n.vx *= .52; n.vy *= .52;
-    if (n.id !== dragId) { n.x += n.vx; n.y += n.vy; }
+
+    n.vx *= .55; n.vy *= .55;
+    if (n.id !== dragId) {
+      n.x += n.vx; n.y += n.vy;
+      n.x = Math.max(50, Math.min(w - 50, n.x));
+      n.y = Math.max(40, Math.min(h - 40, n.y));
+    }
   }
+
   for (const e of edges) {
     const a = nodes.find(n => n.id === e.a), b = nodes.find(n => n.id === e.b);
     if (!a || !b) continue;
     const dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || .1;
-    const tgt = e.type === 'tag' ? 80 : e.type === 'color' ? 90 : 120;
-    const f = (d - tgt) * .007;
+    const tgt = e.type === 'tag' ? 35 : e.type === 'color' ? 45 : 55;
+    const f = (d - tgt) * .008;
     a.vx += dx / d * f; a.vy += dy / d * f;
     b.vx -= dx / d * f; b.vy -= dy / d * f;
   }
@@ -237,7 +255,6 @@ export function drawGraph(
   }
   const anyH = !!hovId;
 
-  // ── Edges ──
   edges.forEach(e => {
     const a = nodes.find(n => n.id === e.a), b = nodes.find(n => n.id === e.b);
     if (!a || !b) return;
@@ -250,90 +267,82 @@ export function drawGraph(
     ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
 
     if (e.type === 'location') {
-      ctx.strokeStyle = LOC_COLOR + '88'; ctx.lineWidth = 0.8;
-      ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]); return;
+      ctx.strokeStyle = LOC_COLOR + '99'; ctx.lineWidth = 0.6;
+      ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]); return;
     }
     if (e.type === 'tag') {
-      ctx.strokeStyle = lit ? 'rgba(255,255,255,.18)' : 'rgba(255,255,255,.04)';
-      ctx.lineWidth = 0.3; ctx.stroke(); return;
+      ctx.strokeStyle = lit ? 'rgba(255,255,255,.25)' : 'rgba(255,255,255,.06)';
+      ctx.lineWidth = 0.4; ctx.stroke(); return;
     }
 
-    // Cat/color/timeline edges
     if (isVisited) {
-      // Breadcrumb path — flowing dashed line
-      ctx.strokeStyle = 'rgba(200,192,168,.35)'; ctx.lineWidth = 1;
-      const offset = (Date.now() / 80) % 20;
-      ctx.setLineDash([6, 6]); ctx.lineDashOffset = -offset;
+      ctx.strokeStyle = 'rgba(200,192,168,.4)'; ctx.lineWidth = 0.8;
+      const offset = (Date.now() / 80) % 16;
+      ctx.setLineDash([4, 4]); ctx.lineDashOffset = -offset;
       ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0;
     } else if (anyH) {
-      ctx.strokeStyle = lit ? 'rgba(255,255,255,.3)' : 'rgba(255,255,255,.025)';
-      ctx.lineWidth = lit ? 0.8 : 0.2; ctx.stroke();
+      ctx.strokeStyle = lit ? 'rgba(255,255,255,.4)' : 'rgba(255,255,255,.04)';
+      ctx.lineWidth = lit ? 0.7 : 0.15; ctx.stroke();
     } else {
-      ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 0.4; ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,.12)';
+      ctx.lineWidth = 0.5; ctx.stroke();
     }
   });
 
-  // ── Nodes ──
   nodes.forEach(n => {
     const isH = n.id === hovId, inS = hN.has(n.id), dim = anyH && !inS;
     const isVisited = visited.has(n.id);
 
     if (n.type === 'cat' || n.type === 'color-group') {
       const c = n.type === 'color-group' ? (n.dominantColor || '#888') : getCatColor(n.cat || '');
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.r + (isH ? 3 : 0), 0, Math.PI * 2);
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.12)' : '#fff'; ctx.fill();
-      ctx.strokeStyle = dim ? 'rgba(255,255,255,.08)' : c;
-      ctx.lineWidth = isH ? 2.5 : 1.5; ctx.stroke();
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.12)' : 'rgba(255,255,255,.85)';
-      ctx.font = '500 11px JetBrains Mono,monospace';
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r + (isH ? 2 : 0), 0, Math.PI * 2);
+      ctx.fillStyle = dim ? 'rgba(255,255,255,.15)' : '#fff'; ctx.fill();
+      ctx.strokeStyle = dim ? 'rgba(255,255,255,.1)' : c;
+      ctx.lineWidth = isH ? 2 : 1.2; ctx.stroke();
+      ctx.fillStyle = dim ? 'rgba(255,255,255,.15)' : '#e8e6e0';
+      ctx.font = '500 10px JetBrains Mono,monospace';
       ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-      ctx.fillText(n.label, n.x + n.r + 10, n.y);
+      ctx.fillText(n.label, n.x + n.r + 8, n.y);
 
     } else if (n.type === 'location') {
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.r + (isH ? 2 : 0), 0, Math.PI * 2);
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.04)' : LOC_COLOR + '33'; ctx.fill();
-      ctx.strokeStyle = dim ? 'rgba(255,255,255,.06)' : LOC_COLOR + (isH ? 'ff' : 'aa');
-      ctx.lineWidth = isH ? 2 : 1.5; ctx.stroke();
-      if (zoom > 0.6) {
-        ctx.fillStyle = dim ? 'rgba(255,255,255,.06)' : LOC_COLOR + (isH ? 'ff' : 'cc');
-        ctx.font = '500 9px JetBrains Mono,monospace';
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r + (isH ? 1.5 : 0), 0, Math.PI * 2);
+      ctx.fillStyle = dim ? 'rgba(255,255,255,.03)' : LOC_COLOR + '44'; ctx.fill();
+      ctx.strokeStyle = dim ? 'rgba(255,255,255,.06)' : LOC_COLOR + (isH ? 'ee' : '88');
+      ctx.lineWidth = isH ? 1.5 : 1; ctx.stroke();
+      if (zoom > 0.55) {
+        ctx.fillStyle = dim ? 'rgba(255,255,255,.06)' : LOC_COLOR + (isH ? 'ff' : 'bb');
+        ctx.font = '400 8px JetBrains Mono,monospace';
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.fillText('◉ ' + n.label, n.x + n.r + 8, n.y);
+        ctx.fillText('◉ ' + n.label, n.x + n.r + 6, n.y);
       }
 
     } else if (n.type === 'photo') {
       const c = n.dominantColor || getCatColor(n.cat || '');
-      const sz = n.r + (isH ? 3 : 0);
-
-      // Visited glow
+      const sz = n.r + (isH ? 2 : 0);
       if (isVisited && !dim) {
-        ctx.beginPath(); ctx.arc(n.x, n.y, sz + 5, 0, Math.PI * 2);
-        ctx.fillStyle = c + '18'; ctx.fill();
+        ctx.beginPath(); ctx.arc(n.x, n.y, sz + 4, 0, Math.PI * 2);
+        ctx.fillStyle = c + '20'; ctx.fill();
       }
-
       ctx.beginPath(); ctx.arc(n.x, n.y, sz, 0, Math.PI * 2);
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.05)' : isH ? '#fff' : c;
+      ctx.fillStyle = dim ? 'rgba(255,255,255,.06)' : isH ? '#fff' : c;
       ctx.fill();
-      if (isH) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
-
-      // Label
-      if (zoom > 0.85) {
-        ctx.fillStyle = dim ? 'rgba(255,255,255,.04)' : isH ? '#fff' : 'rgba(255,255,255,.4)';
+      if (isH) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
+      if (zoom > 0.8) {
+        ctx.fillStyle = dim ? 'rgba(255,255,255,.05)' : isH ? '#fff' : 'rgba(255,255,255,.45)';
         ctx.font = (isH ? '500 ' : '') + '8px JetBrains Mono,monospace';
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.fillText(n.label, n.x + n.r + 7, n.y);
+        ctx.fillText(n.label, n.x + n.r + 5, n.y);
       }
 
     } else {
-      // Tag
       ctx.beginPath(); ctx.arc(n.x, n.y, n.r + (isH ? 1 : 0), 0, Math.PI * 2);
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.02)' : isH ? 'rgba(255,255,255,.6)' : 'rgba(255,255,255,.13)';
+      ctx.fillStyle = dim ? 'rgba(255,255,255,.03)' : isH ? 'rgba(255,255,255,.6)' : 'rgba(255,255,255,.15)';
       ctx.fill();
-      if (zoom > 1.3) {
-        ctx.fillStyle = dim ? 'rgba(255,255,255,.03)' : isH ? 'rgba(255,255,255,.8)' : 'rgba(255,255,255,.18)';
-        ctx.font = '300 8px JetBrains Mono,monospace';
+      if (zoom > 1.2) {
+        ctx.fillStyle = dim ? 'rgba(255,255,255,.04)' : isH ? 'rgba(255,255,255,.8)' : 'rgba(255,255,255,.2)';
+        ctx.font = '300 7px JetBrains Mono,monospace';
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.fillText(n.label, n.x + n.r + 5, n.y);
+        ctx.fillText(n.label, n.x + n.r + 4, n.y);
       }
     }
   });
