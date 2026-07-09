@@ -22,6 +22,9 @@ export default function Home() {
   useEffect(() => {
     fetch('/api/photos').then(r => r.json()).then(setData).catch(() => {});
   }, []);
+  useEffect(() => {
+  if (window.innerWidth <= 1024) setSbOff(true);
+}, [])
 
   const projects = data.projects.filter(p => p.photos.length > 0);
   const allPhotos = useMemo(() => flattenPhotos(data), [data]);
@@ -53,8 +56,9 @@ export default function Home() {
   }, [projects]);
 
   const handleFilter = useCallback((f: Filter) => {
+    const isMobile = window.innerWidth <= 1024;
     if (f.type === 'project') { openDeck(f.value); setFilter(f); return; }
-    setDeckProject(null); setSbOff(false); setFilter(f);
+    setDeckProject(null); setSbOff(isMobile); setFilter(f);
   }, [openDeck]);
 
   const closeDeck = useCallback(() => {
@@ -67,7 +71,7 @@ export default function Home() {
     setLbFile(null);
     setView('gallery');
     setFilter({ type: 'all', value: 'all' });
-    setSbOff(false);
+    setSbOff(window.innerWidth <= 1024);
   }, []);
 
   const onGraphCatClick = useCallback((cat: string) => {

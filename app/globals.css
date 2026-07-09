@@ -245,8 +245,3 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
   .gm-btn{width:36px;height:36px}
 }
 
-/* Sidebar overlay backdrop on mobile */
-@media (max-width:1024px) {
-  .sidebar::after{content:'';position:fixed;top:0;right:0;bottom:0;width:100vw;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .3s}
-  .sidebar:not(.off)::after{opacity:1;pointer-events:all}
-}
