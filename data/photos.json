@@ -4,173 +4,133 @@
   "defaultMusicArtist": "",
   "projects": [
     {
-      "id": "eur",
-      "dir": "eur",
-      "title": "European Life",
-      "story": "A visual chronicle capturing the grand symmetry of European landscapes and the intimate micro-stories found within its old-world streets.",
-      "cover": "IMG_9752.webp",
-      "location": "Europe",
+      "id": "84c3112c",
+      "dir": "英語戲劇",
+      "title": "POWERPLAY",
+      "story": "POWERPLAY是靜心高中一年一度的英語戲劇，這次我擔任的角色是作為幕後剪輯與拍攝者，也記錄了許多經典劇照",
+      "cover": "IMG_7383.JPG",
+      "location": "靜心高中",
       "year": "2025",
       "tags": [
-        "Landscape",
-        "Street",
-        "Travel"
+        "戲劇"
       ],
       "music": "",
       "musicTitle": "",
       "musicArtist": "",
       "photos": [
         {
-          "file": "IMG_9752.webp",
-          "originalFile": "IMG_9752.JPG",
-          "title": "Confetti Skies",
-          "featured": true,
-          "location": "Grindelwald, Switzerland",
+          "file": "IMG_7298.webp",
+          "originalFile": "IMG_7298.JPG",
+          "title": "舞台上的囚徒",
+          "story": "",
+          "featured": false,
+          "location": "",
           "year": "2025",
           "camera": "Canon EOS 6D",
+          "focalLength": "105mm",
+          "aperture": "f/4.0",
+          "shutterSpeed": "1/1000s",
+          "iso": "ISO 2000",
+          "tags": [
+            "戲劇"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAACQBACdASoUABQAPzmGulOvKSWisAgB4CcJYwDN71yB0a1kZ+2coMXBkDenSAAA/uvMZ+VLZ4yF1ouhRPVP8EX6Kyhm5OcQuRInmujLBgB5xyRu2jMGLwZpqO0AAA==",
+          "dominantColor": "#080808"
+        },
+        {
+          "file": "IMG_7383.webp",
+          "originalFile": "IMG_7383.JPG",
+          "title": "少富",
+          "story": "",
+          "featured": false,
+          "location": "靜心高中",
+          "year": "2025",
+          "camera": "Canon EOS 6D",
+          "focalLength": "82mm",
+          "aperture": "f/4.0",
+          "shutterSpeed": "1/90s",
+          "iso": "ISO 1250",
+          "tags": [
+            "戲劇"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADQAwCdASoUABQAPzmIulOvKSWisAgB4CcJZwAAW+qvufHbaiEa/wAA/uvNwTRlw1VGg7CtO7sUkliPZ/CoU1XEWdzhO7gPEQ6oAAAA",
+          "dominantColor": "#080808"
+        },
+        {
+          "file": "IMG_7397.webp",
+          "originalFile": "IMG_7397.JPG",
+          "title": "未寫的篇章",
+          "story": "",
+          "featured": false,
+          "location": "靜心高中",
+          "year": "2025",
+          "camera": "Canon EOS 6D",
+          "focalLength": "92mm",
+          "aperture": "f/4.0",
+          "shutterSpeed": "1/90s",
+          "iso": "ISO 640",
+          "tags": [
+            "戲劇"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADQBACdASoUABQAPyWAs1OuKKSit/qoAcAkiUAW/V5BD76j/v9ik40UWrpY6kR0wAD+8MFO6LFiK+QCe48Q+dbQSXE34QOA2sZUuVydc21V5sju0OW/o+wa/7lsMGWRkOukK0RHv9CA7kAA",
+          "dominantColor": "#080808"
+        },
+        {
+          "file": "IMG_7458.webp",
+          "originalFile": "IMG_7458.JPG",
+          "title": "獨白",
+          "story": "",
+          "featured": false,
+          "location": "",
+          "year": "2025",
+          "camera": "Canon EOS 6D",
+          "focalLength": "105mm",
+          "aperture": "f/4.0",
+          "shutterSpeed": "1/90s",
+          "iso": "ISO 500",
+          "tags": [
+            "戲劇"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAQBQCdASoUABQAPzmUwlovKickKAgB4CcJYwDKAA9qrcSG1BxVGQpNBbxc4zDrWU/IAP6+B/TRZy8qgwg/YG1dVZqg3wOJ8KXODolvChBAObV/bdyiGgLphNpBronPwXYOxquxRPbAjZcUbKfzi9lAAAA=",
+          "dominantColor": "#080808"
+        },
+        {
+          "file": "IMG_7487.webp",
+          "originalFile": "IMG_7487.JPG",
+          "title": "迷霧",
+          "story": "",
+          "featured": false,
+          "location": "靜心高中",
+          "year": "2025",
+          "camera": "Canon EOS 6D",
+          "focalLength": "105mm",
+          "aperture": "f/4.5",
+          "shutterSpeed": "1/90s",
+          "iso": "ISO 1000",
+          "tags": [
+            "戲劇"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAACwBACdASoUABQAPzmUwFmvKaajqAgB4CcJQBOmUAA1Kbk3+4NI9OGpGKr9OfLAAP7YwZwIl9lnd1fqEgEkurZx/pYC4XfN8+93r4m9hKXcEjbHfPX2lm/1c+3gSUCR0/fSpry0A6hUBqu4GeDsB0YAfW72lEp3sgLWKPQFiSG/QAAA",
+          "dominantColor": "#080808"
+        },
+        {
+          "file": "IMG_9958.webp",
+          "originalFile": "IMG_9958.JPG",
+          "title": "界線",
+          "story": "這張拍攝者是曾宥誠，也是我整個劇照最喜歡的其中一張",
+          "featured": false,
+          "location": "",
+          "year": "2025",
+          "camera": "Canon EOS 6D Mark II",
           "focalLength": "70mm",
-          "aperture": "f/11.0",
-          "shutterSpeed": "1/350s",
-          "iso": "ISO 100",
+          "aperture": "f/4.0",
+          "shutterSpeed": "1/160s",
+          "iso": "ISO 500",
           "tags": [
-            "paragliding",
-            "sky",
-            "valley"
+            "戲劇"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAACQBACdASoUABQAPzmSwFmvKaajqAgB4CcJQBOmaYgfxxRMY0BhGcMdmpwuTAAAa6b9DmbszvUbj0xo8ckCCtVBQXNUIySybGxY+h17jAMQ4F1noK4T83Quxt3XZlNThUqj1Sk9VIpt9YqmIvK94jL4Ecm0F/Dk4mDOAAAA"
-        },
-        {
-          "file": "IMG_9757.webp",
-          "originalFile": "IMG_9757.JPG",
-          "title": "Swiss-Flavored Sky",
-          "featured": true,
-          "location": "Grindelwald, Switzerland",
-          "year": "2025",
-          "camera": "Canon EOS 6D",
-          "focalLength": "70mm",
-          "aperture": "f/9.5",
-          "shutterSpeed": "1/350s",
-          "iso": "ISO 100",
-          "tags": [
-            "mountain",
-            "paragliding",
-            "clouds"
-          ],
-          "blurDataURL": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAAAwBACdASoUABQAPzmKulWvKSWjKA1R4CcJaAC06Arv/qaQpKgR3tUnGAAA5lFqStO8Bg73LxrRhO8e9oGNC1h7inI7svd7G+q+h9l9aNoI7JLctTIRiucQalqyNLDKBKnNXoJiCKZiASXz3GgnK8ulLtySAAAA"
-        },
-        {
-          "file": "IMG_9766.webp",
-          "originalFile": "IMG_9766.JPG",
-          "title": "Chillin' On Jungfrau Ice",
-          "featured": true,
-          "location": "Jungfrau Region, Switzerland",
-          "year": "2025",
-          "camera": "Canon EOS 6D",
-          "focalLength": "200mm",
-          "aperture": "f/9.5",
-          "shutterSpeed": "1/350s",
-          "iso": "ISO 100",
-          "tags": [
-            "glacier",
-            "paragliding",
-            "snow"
-          ],
-          "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAACwAwCdASoUABQAPzmOuVcvKaUjqA1R4CcJYgCw7AEGVvjgVcdUQAD+jUHXFSqcWdDeXmp2Ut52D+eY9PQ0uvX53wkvOxQkFiTTOI/azbxBWb1sI1D68jJ2OrXF1faZJ4tkwBrskdNwiAZzXbxzGeQAAAA="
-        },
-        {
-          "file": "IMG_9789.webp",
-          "originalFile": "IMG_9789.JPG",
-          "title": "Jungfrau's White Frosting",
-          "featured": true,
-          "location": "Jungfrau, Switzerland",
-          "year": "2025",
-          "camera": "Canon EOS 6D",
-          "focalLength": "123mm",
-          "aperture": "f/8.0",
-          "shutterSpeed": "1/350s",
-          "iso": "ISO 100",
-          "tags": [
-            "mountain",
-            "glacier",
-            "peak"
-          ],
-          "blurDataURL": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAACwBACdASoUABQAPzmSv1mvKaajqAgB4CcJQBdgAbtOE+0olWidkyxCqsAUwHQAAP3wNMkGnH2j9cEXhdvHh0XUOECcJDRPYDgxAg42Ttg8n5g5lBV7F4GWczxh3YXCiw3CQ8+XRBNtwi9jYtE56uL7U46Ej4WLo2Pmh+AAAAA="
-        },
-        {
-          "file": "L1090688.webp",
-          "originalFile": "L1090688.JPG",
-          "title": "Golden Hour Gothic",
-          "featured": true,
-          "location": "Strasbourg, France",
-          "year": "2025",
-          "camera": "LEICA Q (Typ 116)",
-          "focalLength": "28mm",
-          "aperture": "f/10.0",
-          "shutterSpeed": "1/60s",
-          "iso": "ISO 800",
-          "tags": [
-            "cathedral",
-            "sunset",
-            "gothic"
-          ],
-          "blurDataURL": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAACQBQCdASoUABQAPzmUwVmvKicjqAgB4CcJbACdMuLKGA/HGVa1r5Rw/G35C2HAPkoIB0nKAAD+3abL/V1bLlpL5fkIyMLBcYGp2b9lUDEzdt88AlOIdMoNGhjQTMMMrW5zL8bCdm8+ZEpxm2HIR/uI74Lxb5k5nq+/qGfA+upY/0uRO37JIR1Nm1/vAAAA"
-        },
-        {
-          "file": "L1090703.webp",
-          "originalFile": "L1090703.JPG",
-          "title": "Gothic Silhouette",
-          "featured": true,
-          "location": "Strasbourg, France",
-          "year": "2025",
-          "camera": "LEICA Q (Typ 116)",
-          "focalLength": "28mm",
-          "aperture": "f/5.6",
-          "shutterSpeed": "1/60s",
-          "iso": "ISO 800",
-          "tags": [
-            "cathedral",
-            "architecture",
-            "shadow"
-          ],
-          "blurDataURL": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAADwBACdASoUABQAPzmSv1mvKaajqAgB4CcJZwDOdBGzQYBo2u6VwJGf87ifIxFzIpAA/sN1G+YYXQyRRklbPj4SvWAObX07qSdYYA+o+EEK9Iwh6ija7TCm2hoGjPIsL+KGRTWXcfE54K6qDM2ETypGiGLydNBskD4AAA=="
-        }
-      ]
-    },
-    {
-      "id": "jap",
-      "dir": "jap",
-      "title": "Japan Life",
-      "story": "Documenting the midnight hues and transient street narratives across Japan's historic quarters.",
-      "cover": "L1090919.webp",
-      "location": "Kyoto, Japan",
-      "year": "2026",
-      "tags": [
-        "Street",
-        "Nightscape",
-        "Travel"
-      ],
-      "music": "",
-      "musicTitle": "",
-      "musicArtist": "",
-      "photos": [
-        {
-          "file": "L1090919.webp",
-          "originalFile": "L1090919.JPG",
-          "title": "Neon Ramen Hunt",
-          "featured": true,
-          "location": "Kyoto, Japan",
-          "year": "2026",
-          "camera": "LEICA Q (Typ 116)",
-          "focalLength": "28mm",
-          "aperture": "f/2.5",
-          "shutterSpeed": "1/125s",
-          "iso": "ISO 400",
-          "tags": [
-            "kyoto",
-            "nightscape",
-            "neon-sign"
-          ],
-          "blurDataURL": "data:image/webp;base64,UklGRogAAABXRUJQVlA4IHwAAAAwBACdASoUABQAPzmSv1mvKaajqAgB4CcJZwAAIEBYwHd7/r+bjpTaoIAA/uv9CAbVsgjMpU6HxKNXmpG+NqFQarwj04tuvpWcOSTpMWlM1aaLV/3qSCuvzgHy+D8ejecOqAuUw6/RGPu9W4nEI0SqerfaLuhMeA2CAAAA"
+          "blurDataURL": "data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAAAwBQCdASoUABQAPzmUwFmvKiajqAgB4CcJQBYdgcjRTe5WMUGOQmOqbB/+QeiuKREeAAD+0ZhD3KpRm9wKUs9jQBVbw+gii8BNQhu2kl2GfWMj93Hn+mRk7FmJoK8Y7mVwMYtn6BlJRLmxtCSNrB4bQC4t/TohvWzYjeh+0dExOiZDoiNAjfyY8ZQMDY91V+2FOAQv0QIz/tQEctpjwO0J4qO3gFKXKAA=",
+          "dominantColor": "#080808"
         }
       ]
     }

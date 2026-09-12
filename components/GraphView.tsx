@@ -5,7 +5,7 @@ import { GNode, GEdge, GraphMode, buildGraph, simulate, drawGraph } from '@/lib/
 
 export default function GraphView({ photos, visible, onClickCat, onClickPhoto }: {
   photos: FlatPhoto[]; visible: boolean;
-  onClickCat: (cat: string) => void;
+  onClickCat: (cat: string, photoFiles: string[]) => void;
   onClickPhoto: (file: string) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -25,40 +25,50 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
     mouseGX: number; mouseGY: number;
     visited: Set<string>;
     pinchDist: number | null;
+    theme: { ink: string; node: string; label: string };
   }>({
     nodes: [], edges: [], dragId: null, hovId: null,
     dox: 0, doy: 0, raf: 0,
     zoom: 1, panX: 0, panY: 0,
     isPanning: false, panStartX: 0, panStartY: 0,
     panStartPX: 0, panStartPY: 0,
-    mouseDownPos: null,
-    mouseGX: -9999, mouseGY: -9999,
-    visited: new Set(),
-    pinchDist: null,
+    mouseDownPos: null, mouseGX: -9999, mouseGY: -9999,
+    visited: new Set(), pinchDist: null,
+    theme: { ink: '0,0,0', node: '#2c2824', label: '#8a7e72' },
   });
 
-  // Extract dominant colors (for color mode)
+  useEffect(() => {
+    const readTheme = () => {
+      const cs = getComputedStyle(document.documentElement);
+      state.current.theme = {
+        ink: cs.getPropertyValue('--ink').trim() || '0,0,0',
+        node: cs.getPropertyValue('--canvas-node').trim() || '#2c2824',
+        label: cs.getPropertyValue('--canvas-label').trim() || '#8a7e72',
+      };
+    };
+    readTheme();
+    const observer = new MutationObserver(readTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     if (!visible || extractedColors.size > 0 || !photos.length) return;
     const map = new Map<string, string>();
     let done = 0;
     photos.forEach(p => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
+      const img = new Image(); img.crossOrigin = 'anonymous';
       img.onload = () => {
         try {
-          const c = document.createElement('canvas');
-          c.width = 4; c.height = 4;
-          const ctx = c.getContext('2d')!;
-          ctx.drawImage(img, 0, 0, 4, 4);
+          const c = document.createElement('canvas'); c.width = 4; c.height = 4;
+          const ctx = c.getContext('2d')!; ctx.drawImage(img, 0, 0, 4, 4);
           const d = ctx.getImageData(0, 0, 4, 4).data;
           let rr = 0, gg = 0, bb = 0;
           for (let i = 0; i < d.length; i += 4) { rr += d[i]; gg += d[i+1]; bb += d[i+2]; }
           const n = d.length / 4;
           map.set(p.file, '#' + [rr/n, gg/n, bb/n].map(v => Math.round(v).toString(16).padStart(2,'0')).join(''));
         } catch {}
-        done++;
-        if (done >= photos.length) setExtractedColors(new Map(map));
+        done++; if (done >= photos.length) setExtractedColors(new Map(map));
       };
       img.onerror = () => { done++; if (done >= photos.length) setExtractedColors(new Map(map)); };
       img.src = p.url;
@@ -86,12 +96,10 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
     const ctx = c.getContext('2d'); if (!ctx) return;
     const d = window.devicePixelRatio || 1, w = c.width / d, h = c.height / d;
     const s = state.current;
-    simulate(s.nodes, s.edges, w / s.zoom + Math.abs(s.panX / s.zoom) * 2, h / s.zoom + Math.abs(s.panY / s.zoom) * 2, s.dragId, s.mouseGX, s.mouseGY);
-    ctx.save();
-    ctx.clearRect(0, 0, w, h);
-    ctx.translate(s.panX, s.panY);
-    ctx.scale(s.zoom, s.zoom);
-    drawGraph(ctx, s.nodes, s.edges, w / s.zoom, h / s.zoom, s.hovId, s.zoom, s.visited, mode);
+    simulate(s.nodes, s.edges, w * 2, h * 2, s.dragId, s.mouseGX, s.mouseGY);
+    ctx.save(); ctx.clearRect(0, 0, w, h);
+    ctx.translate(s.panX, s.panY); ctx.scale(s.zoom, s.zoom);
+    drawGraph(ctx, s.nodes, s.edges, w / s.zoom, h / s.zoom, s.hovId, s.zoom, s.visited, mode, s.theme);
     ctx.restore();
     s.raf = requestAnimationFrame(tick);
   }, [mode]);
@@ -127,44 +135,33 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
         <button className={`gm-btn${mode === 'timeline' ? ' act' : ''}`} onClick={() => setMode('timeline')} title="Timeline">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><line x1="1" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="1"/><circle cx="3" cy="6" r="1.2" fill="currentColor"/><circle cx="6" cy="6" r="1.2" fill="currentColor"/><circle cx="9" cy="6" r="1.2" fill="currentColor"/></svg>
         </button>
+        <button className={`gm-btn${mode === 'gear' ? ' act' : ''}`} onClick={() => setMode('gear')} title="Gear & Style">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="2" stroke="currentColor" strokeWidth="0.8"/><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="0.5" strokeDasharray="1.5 1.5"/><line x1="6" y1="1" x2="6" y2="3" stroke="currentColor" strokeWidth="0.7"/><line x1="6" y1="9" x2="6" y2="11" stroke="currentColor" strokeWidth="0.7"/><line x1="1" y1="6" x2="3" y2="6" stroke="currentColor" strokeWidth="0.7"/><line x1="9" y1="6" x2="11" y2="6" stroke="currentColor" strokeWidth="0.7"/></svg>
+        </button>
       </div>
 
-      <canvas ref={canvasRef}
-        style={{ touchAction: 'none' }}
+      <canvas ref={canvasRef} style={{ touchAction: 'none' }}
         onWheel={e => {
-          e.preventDefault();
-          const s = state.current;
+          e.preventDefault(); const s = state.current;
           const rect = canvasRef.current!.getBoundingClientRect();
           const mx = e.clientX - rect.left, my = e.clientY - rect.top;
           const oldZoom = s.zoom;
-          const delta = e.deltaY > 0 ? 0.97 : 1.03;
-          s.zoom = Math.max(0.2, Math.min(4, s.zoom * delta));
+          s.zoom = Math.max(0.2, Math.min(4, s.zoom * (e.deltaY > 0 ? 0.97 : 1.03)));
           s.panX = mx - (mx - s.panX) * (s.zoom / oldZoom);
           s.panY = my - (my - s.panY) * (s.zoom / oldZoom);
         }}
         onMouseMove={e => {
           const rect = canvasRef.current!.getBoundingClientRect();
           const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-          const s = state.current;
-          const { gx, gy } = toGraph(mx, my);
+          const s = state.current; const { gx, gy } = toGraph(mx, my);
           s.mouseGX = gx; s.mouseGY = gy;
-          if (s.isPanning) {
-            s.panX = s.panStartPX + (mx - s.panStartX);
-            s.panY = s.panStartPY + (my - s.panStartY);
-            canvasRef.current!.style.cursor = 'grabbing'; return;
-          }
-          if (s.dragId) {
-            const n = s.nodes.find(x => x.id === s.dragId);
-            if (n) { n.x = gx - s.dox; n.y = gy - s.doy; n.gx = n.x; n.gy = n.y; n.vx = 0; n.vy = 0; }
-            return;
-          }
+          if (s.isPanning) { s.panX = s.panStartPX + (mx - s.panStartX); s.panY = s.panStartPY + (my - s.panStartY); canvasRef.current!.style.cursor = 'grabbing'; return; }
+          if (s.dragId) { const n = s.nodes.find(x => x.id === s.dragId); if (n) { n.x = gx - s.dox; n.y = gy - s.doy; n.gx = n.x; n.gy = n.y; n.vx = 0; n.vy = 0; } return; }
           const n = getN(mx, my); s.hovId = n?.id || null;
           canvasRef.current!.style.cursor = n ? (n.type === 'photo' || n.type === 'cat' || n.type === 'color-group' ? 'pointer' : 'grab') : 'grab';
           const tip = tipRef.current;
           if (tip && n && n.type === 'photo') {
-            tip.classList.add('on');
-            tip.style.left = Math.min(mx + 14, canvasRef.current!.clientWidth - 200) + 'px';
-            tip.style.top = Math.max(my - 16, 4) + 'px';
+            tip.classList.add('on'); tip.style.left = Math.min(mx + 14, canvasRef.current!.clientWidth - 200) + 'px'; tip.style.top = Math.max(my - 16, 4) + 'px';
             tip.querySelector('.gt-t')!.textContent = n.label;
             tip.querySelector('.gt-tg')!.innerHTML = (n.tags || []).map(t => `<span class="gt-ti">#${t}</span>`).join('');
           } else tip?.classList.remove('on');
@@ -172,17 +169,10 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
         onMouseDown={e => {
           const rect = canvasRef.current!.getBoundingClientRect();
           const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-          const s = state.current;
-          const n = getN(mx, my);
+          const s = state.current; const n = getN(mx, my);
           s.mouseDownPos = { x: mx, y: my };
-          if (n) {
-            if (n.type === 'cat' || n.type === 'color-group' || n.type === 'photo') return;
-            const { gx, gy } = toGraph(mx, my);
-            s.dragId = n.id; s.dox = gx - n.x; s.doy = gy - n.y;
-          } else {
-            s.isPanning = true; s.panStartX = mx; s.panStartY = my;
-            s.panStartPX = s.panX; s.panStartPY = s.panY;
-          }
+          if (n) { if (n.type === 'cat' || n.type === 'color-group' || n.type === 'photo') return; const { gx, gy } = toGraph(mx, my); s.dragId = n.id; s.dox = gx - n.x; s.doy = gy - n.y; }
+          else { s.isPanning = true; s.panStartX = mx; s.panStartY = my; s.panStartPX = s.panX; s.panStartPY = s.panY; }
         }}
         onMouseUp={e => {
           const rect = canvasRef.current!.getBoundingClientRect();
@@ -191,73 +181,70 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
           const wasDrag = s.mouseDownPos && Math.hypot(mx - s.mouseDownPos.x, my - s.mouseDownPos.y) > 5;
           if (!wasDrag && s.mouseDownPos) {
             const n = getN(mx, my);
-            if (n?.type === 'photo') { s.visited.add(n.id); onClickPhoto(n.id.replace('p:', '')); }
-            if ((n?.type === 'cat' || n?.type === 'color-group') && n.cat) onClickCat(n.cat);
+            if (n?.type === 'photo') {
+              s.visited.add(n.id);
+              const file = n.id.replace('p:', '').split(':')[0];
+              onClickPhoto(file);
+              if (mode === 'gear') setTimeout(() => { init(); }, 500);
+            }
+            if ((n?.type === 'cat' || n?.type === 'color-group') && n.cat) {
+              const photoFiles: string[] = [];
+              s.edges.forEach(edge => {
+                let pid: string | null = null;
+                if (edge.a === n.id && edge.b.startsWith('p:')) pid = edge.b;
+                else if (edge.b === n.id && edge.a.startsWith('p:')) pid = edge.a;
+                if (pid) { const raw = pid.slice(2); const ci = raw.indexOf(':'); photoFiles.push(ci >= 0 ? raw.substring(0, ci) : raw); }
+              });
+              onClickCat(n.cat, [...new Set(photoFiles)]);
+            }
           }
           s.dragId = null; s.isPanning = false; s.mouseDownPos = null;
         }}
-        onMouseLeave={() => {
-          const s = state.current;
-          s.dragId = null; s.isPanning = false; s.hovId = null; s.mouseDownPos = null;
-          s.mouseGX = -9999; s.mouseGY = -9999;
-          tipRef.current?.classList.remove('on');
-        }}
-        /* ── Touch support: pan, pinch zoom, tap ── */
+        onMouseLeave={() => { const s = state.current; s.dragId = null; s.isPanning = false; s.hovId = null; s.mouseDownPos = null; s.mouseGX = -9999; s.mouseGY = -9999; tipRef.current?.classList.remove('on'); }}
         onTouchStart={e => {
-          const s = state.current;
-          const rect = canvasRef.current!.getBoundingClientRect();
-          if (e.touches.length === 2) {
-            // Pinch start
-            const t1 = e.touches[0], t2 = e.touches[1];
-            s.pinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-            s.isPanning = false;
-            return;
-          }
-          const t = e.touches[0];
-          const mx = t.clientX - rect.left, my = t.clientY - rect.top;
-          const n = getN(mx, my);
+          const s = state.current; const rect = canvasRef.current!.getBoundingClientRect();
+          if (e.touches.length === 2) { const t1 = e.touches[0], t2 = e.touches[1]; s.pinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY); s.isPanning = false; return; }
+          const t = e.touches[0]; const mx = t.clientX - rect.left, my = t.clientY - rect.top;
           s.mouseDownPos = { x: mx, y: my };
-          if (!n || (n.type !== 'cat' && n.type !== 'color-group' && n.type !== 'photo')) {
-            s.isPanning = true; s.panStartX = mx; s.panStartY = my;
-            s.panStartPX = s.panX; s.panStartPY = s.panY;
-          }
+          const n = getN(mx, my);
+          if (!n || (n.type !== 'cat' && n.type !== 'color-group' && n.type !== 'photo')) { s.isPanning = true; s.panStartX = mx; s.panStartY = my; s.panStartPX = s.panX; s.panStartPY = s.panY; }
         }}
         onTouchMove={e => {
-          e.preventDefault();
-          const s = state.current;
-          const rect = canvasRef.current!.getBoundingClientRect();
+          e.preventDefault(); const s = state.current; const rect = canvasRef.current!.getBoundingClientRect();
           if (e.touches.length === 2 && s.pinchDist !== null) {
-            // Pinch zoom
             const t1 = e.touches[0], t2 = e.touches[1];
             const newDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-            const midX = (t1.clientX + t2.clientX) / 2 - rect.left;
-            const midY = (t1.clientY + t2.clientY) / 2 - rect.top;
-            const oldZoom = s.zoom;
-            s.zoom = Math.max(0.2, Math.min(4, s.zoom * (newDist / s.pinchDist)));
-            s.panX = midX - (midX - s.panX) * (s.zoom / oldZoom);
-            s.panY = midY - (midY - s.panY) * (s.zoom / oldZoom);
-            s.pinchDist = newDist;
-            return;
+            const midX = (t1.clientX + t2.clientX) / 2 - rect.left, midY = (t1.clientY + t2.clientY) / 2 - rect.top;
+            const oldZoom = s.zoom; s.zoom = Math.max(0.2, Math.min(4, s.zoom * (newDist / s.pinchDist)));
+            s.panX = midX - (midX - s.panX) * (s.zoom / oldZoom); s.panY = midY - (midY - s.panY) * (s.zoom / oldZoom);
+            s.pinchDist = newDist; return;
           }
-          const t = e.touches[0];
-          const mx = t.clientX - rect.left, my = t.clientY - rect.top;
-          if (s.isPanning) {
-            s.panX = s.panStartPX + (mx - s.panStartX);
-            s.panY = s.panStartPY + (my - s.panStartY);
-          }
+          const t = e.touches[0]; const mx = t.clientX - rect.left, my = t.clientY - rect.top;
+          if (s.isPanning) { s.panX = s.panStartPX + (mx - s.panStartX); s.panY = s.panStartPY + (my - s.panStartY); }
         }}
         onTouchEnd={e => {
-          const s = state.current;
-          s.pinchDist = null;
+          const s = state.current; s.pinchDist = null;
           if (s.mouseDownPos && e.changedTouches.length) {
-            const t = e.changedTouches[0];
-            const rect = canvasRef.current!.getBoundingClientRect();
+            const t = e.changedTouches[0]; const rect = canvasRef.current!.getBoundingClientRect();
             const mx = t.clientX - rect.left, my = t.clientY - rect.top;
-            const wasDrag = Math.hypot(mx - s.mouseDownPos.x, my - s.mouseDownPos.y) > 10;
-            if (!wasDrag) {
+            if (Math.hypot(mx - s.mouseDownPos.x, my - s.mouseDownPos.y) <= 10) {
               const n = getN(mx, my);
-              if (n?.type === 'photo') { s.visited.add(n.id); onClickPhoto(n.id.replace('p:', '')); }
-              if ((n?.type === 'cat' || n?.type === 'color-group') && n.cat) onClickCat(n.cat);
+              if (n?.type === 'photo') {
+                s.visited.add(n.id);
+                const file = n.id.replace('p:', '').split(':')[0];
+                onClickPhoto(file);
+                if (mode === 'gear') setTimeout(() => { init(); }, 500);
+              }
+              if ((n?.type === 'cat' || n?.type === 'color-group') && n.cat) {
+                const photoFiles: string[] = [];
+                s.edges.forEach(edge => {
+                  let pid: string | null = null;
+                  if (edge.a === n.id && edge.b.startsWith('p:')) pid = edge.b;
+                  else if (edge.b === n.id && edge.a.startsWith('p:')) pid = edge.a;
+                  if (pid) { const raw = pid.slice(2); const ci = raw.indexOf(':'); photoFiles.push(ci >= 0 ? raw.substring(0, ci) : raw); }
+                });
+                onClickCat(n.cat, [...new Set(photoFiles)]);
+              }
             }
           }
           s.isPanning = false; s.mouseDownPos = null;

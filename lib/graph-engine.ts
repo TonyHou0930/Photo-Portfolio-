@@ -1,6 +1,6 @@
-import { FlatPhoto, getCatColor } from './data';
+import { FlatPhoto, getCatColor, focalCategory, shootingStyles } from './data';
 
-export type GraphMode = 'graph' | 'color' | 'timeline';
+export type GraphMode = 'graph' | 'color' | 'timeline' | 'gear';
 
 export interface GNode {
   id: string; x: number; y: number; gx: number; gy: number;
@@ -10,7 +10,6 @@ export interface GNode {
 }
 export interface GEdge { a: string; b: string; type: 'cat' | 'tag' | 'location' | 'color'; }
 
-const LOC_COLOR = '#e0a050';
 
 function hexToHsl(hex: string): [number, number, number] {
   const r = parseInt(hex.slice(1, 3), 16) / 255;
@@ -46,6 +45,7 @@ export function buildGraph(
 ): { nodes: GNode[]; edges: GEdge[] } {
   if (mode === 'timeline') return buildTimeline(photos, w, h);
   if (mode === 'color') return buildColorGraph(photos, w, h, extractedColors);
+  if (mode === 'gear') return buildGearGraph(photos, w, h);
   return buildNormalGraph(photos, w, h);
 }
 
@@ -54,16 +54,14 @@ function buildNormalGraph(photos: FlatPhoto[], w: number, h: number): { nodes: G
   const cx = w / 2, cy = h / 2;
   const nodes: GNode[] = [], edges: GEdge[] = [];
 
-  const catSet = new Set<string>(), locSet = new Set<string>(), tagSet = new Set<string>();
+  const catSet = new Set<string>(), tagSet = new Set<string>();
   photos.forEach(p => {
     if (p.category) catSet.add(p.category);
-    if (p.location) locSet.add(p.location);
     p.tags.forEach(t => tagSet.add(t));
   });
-  const cats = Array.from(catSet), locs = Array.from(locSet);
-  const usedTags = Array.from(tagSet).filter(t => !catSet.has(t) && !locSet.has(t));
+  const cats = Array.from(catSet);
+  const usedTags = Array.from(tagSet).filter(t => !catSet.has(t));
 
-  // ── Layer 1: Categories on inner ring ──
   const catRadius = Math.min(w, h) * 0.18;
   const catCenters: Record<string, { x: number; y: number; angle: number }> = {};
   cats.forEach((cat, i) => {
@@ -74,7 +72,6 @@ function buildNormalGraph(photos: FlatPhoto[], w: number, h: number): { nodes: G
     nodes.push({ id: 'c:' + cat, x, y, gx: x, gy: y, r: 8, label: cat, type: 'cat', cat, vx: 0, vy: 0 });
   });
 
-  // ── Layer 2: Photos on middle ring, clustered around their category ──
   const photoRadius = Math.min(w, h) * 0.32;
   const catPhotos: Record<string, FlatPhoto[]> = {};
   photos.forEach(p => {
@@ -88,49 +85,22 @@ function buildNormalGraph(photos: FlatPhoto[], w: number, h: number): { nodes: G
     const group = catPhotos[cat] || [];
     const arcSpan = (group.length / Math.max(photos.length, 1)) * Math.PI * 2;
     const startAngle = cc.angle - arcSpan / 2;
-
     group.forEach((p, i) => {
-      const a = group.length === 1
-        ? cc.angle
-        : startAngle + (i / (group.length - 1)) * arcSpan;
+      const a = group.length === 1 ? cc.angle : startAngle + (i / (group.length - 1)) * arcSpan;
       const jitter = (Math.random() - 0.5) * 20;
-      const r = photoRadius + jitter;
-      const px = cx + Math.cos(a) * r;
-      const py = cy + Math.sin(a) * r;
+      const px = cx + Math.cos(a) * (photoRadius + jitter);
+      const py = cy + Math.sin(a) * (photoRadius + jitter);
       nodes.push({ id: 'p:' + p.file, x: px, y: py, gx: px, gy: py, r: 4, label: p.title, type: 'photo', cat: p.category, tags: p.tags, photoUrl: p.url, year: p.year, vx: 0, vy: 0 });
       edges.push({ a: 'c:' + cat, b: 'p:' + p.file, type: 'cat' });
-      if (p.location) edges.push({ a: 'l:' + p.location, b: 'p:' + p.file, type: 'location' });
     });
   });
 
-  // ── Layer 3: Locations between their photos and category ──
-  locs.forEach(loc => {
-    const locPhotos = photos.filter(p => p.location === loc);
-    if (!locPhotos.length) return;
-    let ax = 0, ay = 0, cnt = 0;
-    locPhotos.forEach(p => {
-      const n = nodes.find(nn => nn.id === 'p:' + p.file);
-      if (n) { ax += n.x; ay += n.y; cnt++; }
-    });
-    if (!cnt) return;
-    ax /= cnt; ay /= cnt;
-    const midR = (catRadius + photoRadius) / 2;
-    const ang = Math.atan2(ay - cy, ax - cx);
-    const lx = cx + Math.cos(ang) * midR;
-    const ly = cy + Math.sin(ang) * midR;
-    nodes.push({ id: 'l:' + loc, x: lx, y: ly, gx: lx, gy: ly, r: 5, label: loc, type: 'location', vx: 0, vy: 0 });
-  });
-
-  // ── Layer 4: Tags on outer ring ──
   const tagRadius = Math.min(w, h) * 0.42;
   usedTags.forEach(tag => {
     const owners = photos.filter(p => p.tags.includes(tag));
     if (!owners.length) return;
     let avgAngle = 0, cnt = 0;
-    owners.forEach(p => {
-      const n = nodes.find(nn => nn.id === 'p:' + p.file);
-      if (n) { avgAngle += Math.atan2(n.y - cy, n.x - cx); cnt++; }
-    });
+    owners.forEach(p => { const n = nodes.find(nn => nn.id === 'p:' + p.file); if (n) { avgAngle += Math.atan2(n.y - cy, n.x - cx); cnt++; } });
     if (!cnt) return;
     avgAngle /= cnt;
     const jitter = (Math.random() - 0.5) * 0.3;
@@ -138,6 +108,64 @@ function buildNormalGraph(photos: FlatPhoto[], w: number, h: number): { nodes: G
     const ty = cy + Math.sin(avgAngle + jitter) * (tagRadius + Math.random() * 15);
     nodes.push({ id: 't:' + tag, x: tx, y: ty, gx: tx, gy: ty, r: 2, label: '#' + tag, type: 'tag', vx: 0, vy: 0 });
     owners.forEach(p => edges.push({ a: 'p:' + p.file, b: 't:' + tag, type: 'tag' }));
+  });
+
+  return { nodes, edges };
+}
+
+// ── GEAR MODE ──────────────────────────────────────────────────
+function buildGearGraph(photos: FlatPhoto[], w: number, h: number): { nodes: GNode[]; edges: GEdge[] } {
+  const nodes: GNode[] = [], edges: GEdge[] = [];
+
+  const cameras = new Map<string, FlatPhoto[]>();
+  photos.forEach(p => { if (p.camera) { if (!cameras.has(p.camera)) cameras.set(p.camera, []); cameras.get(p.camera)!.push(p); } });
+
+  const focals = new Map<string, FlatPhoto[]>();
+  photos.forEach(p => { const fc = focalCategory(p.focalLength); if (fc) { if (!focals.has(fc)) focals.set(fc, []); focals.get(fc)!.push(p); } });
+
+  const styleMap = new Map<string, FlatPhoto[]>();
+  photos.forEach(p => { shootingStyles(p).forEach(s => { if (!styleMap.has(s)) styleMap.set(s, []); styleMap.get(s)!.push(p); }); });
+
+  const zones = [
+    { label: 'CAMERA', items: Array.from(cameras.entries()).map(([k, v]) => ({ id: 'g:cam:' + k, label: k, photos: v })), ox: w * 0.18, oy: h * 0.3 },
+    { label: 'FOCAL LENGTH', items: Array.from(focals.entries()).map(([k, v]) => ({ id: 'g:fl:' + k, label: k, photos: v })), ox: w * 0.65, oy: h * 0.25 },
+    { label: 'STYLE', items: Array.from(styleMap.entries()).map(([k, v]) => ({ id: 'g:st:' + k, label: k, photos: v })), ox: w * 0.35, oy: h * 0.75 },
+  ];
+
+  zones.forEach(zone => {
+    const titleY = zone.oy - (zone.items.length > 1 ? 80 : 50);
+    nodes.push({ id: 'title:' + zone.label, x: zone.ox, y: titleY, gx: zone.ox, gy: titleY, r: 0, label: zone.label, type: 'cat', vx: 0, vy: 0 });
+
+    zone.items.forEach((item, i) => {
+      const itemY = zone.oy + i * 110;
+      const itemX = zone.ox + (i % 2 === 1 ? 60 : 0);
+      const catR = Math.min(6 + item.photos.length * 0.08, 14);
+
+      nodes.push({
+        id: item.id, x: itemX, y: itemY, gx: itemX, gy: itemY,
+        r: catR, label: `${item.label} (${item.photos.length})`,
+        type: 'cat', cat: item.label, vx: 0, vy: 0
+      });
+
+      const shuffled = [...item.photos].sort(() => Math.random() - 0.5);
+      const showing = shuffled.slice(0, 10);
+      const dotRadius = 35 + showing.length * 4;
+
+      showing.forEach((p, j) => {
+        const a = (j / showing.length) * Math.PI * 2 - Math.PI / 2;
+        const jitter = (Math.random() - 0.5) * 8;
+        const px = itemX + Math.cos(a) * (dotRadius + jitter);
+        const py = itemY + Math.sin(a) * (dotRadius + jitter);
+
+        nodes.push({
+          id: 'p:' + p.file + ':' + item.id, x: px, y: py, gx: px, gy: py,
+          r: 3, label: p.title, type: 'photo',
+          cat: item.label, tags: p.tags, photoUrl: p.url, year: p.year,
+          vx: 0, vy: 0
+        });
+        edges.push({ a: item.id, b: 'p:' + p.file + ':' + item.id, type: 'cat' });
+      });
+    });
   });
 
   return { nodes, edges };
@@ -161,7 +189,7 @@ function buildColorGraph(photos: FlatPhoto[], w: number, h: number, extractedCol
     const r = Math.min(w, h) * 0.25;
     const gx = cx + Math.cos(a) * r, gy = cy + Math.sin(a) * r;
     const gc = COLOR_GROUP_COLORS[group] || '#888';
-    nodes.push({ id: 'cg:' + group, x: gx, y: gy, gx, gy, r: 8, label: group, type: 'color-group', dominantColor: gc, vx: 0, vy: 0 });
+    nodes.push({ id: 'cg:' + group, x: gx, y: gy, gx, gy, r: 8, label: group, type: 'color-group', cat: group, dominantColor: gc, vx: 0, vy: 0 });
     const ga = Math.PI * (3 - Math.sqrt(5));
     gPhotos.forEach((p, j) => {
       const pa = j * ga, pr = 35 + (j % 4) * 20;
@@ -196,21 +224,18 @@ function buildTimeline(photos: FlatPhoto[], w: number, h: number): { nodes: GNod
 export function simulate(
   nodes: GNode[], edges: GEdge[], w: number, h: number,
   dragId: string | null, mouseGX?: number, mouseGY?: number
-) {
+): number {
   for (let i = 0; i < nodes.length; i++) {
     const n = nodes[i];
     n.vx += (n.gx - n.x) * .025;
     n.vy += (n.gy - n.y) * .025;
-
     if (mouseGX !== undefined && mouseGY !== undefined) {
       const dx = mouseGX - n.x, dy = mouseGY - n.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < 100 && dist > 5 && n.type === 'photo') {
-        n.vx += dx / dist * 0.3;
-        n.vy += dy / dist * 0.3;
+        n.vx += dx / dist * 0.3; n.vy += dy / dist * 0.3;
       }
     }
-
     for (let j = i + 1; j < nodes.length; j++) {
       const m = nodes[j];
       const dx = n.x - m.x, dy = n.y - m.y;
@@ -222,7 +247,6 @@ export function simulate(
         m.vx -= dx / d * f; m.vy -= dy / d * f;
       }
     }
-
     n.vx *= .55; n.vy *= .55;
     if (n.id !== dragId) {
       n.x += n.vx; n.y += n.vy;
@@ -230,7 +254,6 @@ export function simulate(
       n.y = Math.max(40, Math.min(h - 40, n.y));
     }
   }
-
   for (const e of edges) {
     const a = nodes.find(n => n.id === e.a), b = nodes.find(n => n.id === e.b);
     if (!a || !b) continue;
@@ -240,14 +263,22 @@ export function simulate(
     a.vx += dx / d * f; a.vy += dy / d * f;
     b.vx -= dx / d * f; b.vy -= dy / d * f;
   }
+  let totalV = 0;
+  for (const n of nodes) totalV += Math.abs(n.vx) + Math.abs(n.vy);
+  return totalV;
 }
 
 // ── DRAW ───────────────────────────────────────────────────────
 export function drawGraph(
   ctx: CanvasRenderingContext2D, nodes: GNode[], edges: GEdge[],
   w: number, h: number, hovId: string | null, zoom: number,
-  visited: Set<string>, mode: GraphMode
+  visited: Set<string>, mode: GraphMode,
+  theme?: { ink: string; node: string; label: string }
 ) {
+  const ink = theme?.ink || '0,0,0';
+  const nc = theme?.node || '#2c2824';
+  const lc = theme?.label || '#8a7e72';
+
   const hE = new Set<GEdge>(), hN = new Set<string>();
   if (hovId) {
     hN.add(hovId);
@@ -261,30 +292,31 @@ export function drawGraph(
     const lit = hE.has(e);
     const isVisited = visited.has(a.id) && visited.has(b.id);
 
-    if (e.type === 'location' && !lit) return;
+    if (mode === 'gear' && !lit) {
+      ctx.strokeStyle = `rgba(${ink},.03)`;
+      ctx.lineWidth = 0.3;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      return;
+    }
+
     if (e.type === 'tag' && zoom < 1.0 && !lit) return;
 
     ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
 
-    if (e.type === 'location') {
-      ctx.strokeStyle = LOC_COLOR + '99'; ctx.lineWidth = 0.6;
-      ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]); return;
-    }
     if (e.type === 'tag') {
-      ctx.strokeStyle = lit ? 'rgba(255,255,255,.25)' : 'rgba(255,255,255,.06)';
+      ctx.strokeStyle = lit ? `rgba(${ink},.25)` : `rgba(${ink},.06)`;
       ctx.lineWidth = 0.4; ctx.stroke(); return;
     }
-
     if (isVisited) {
       ctx.strokeStyle = 'rgba(200,192,168,.4)'; ctx.lineWidth = 0.8;
       const offset = (Date.now() / 80) % 16;
       ctx.setLineDash([4, 4]); ctx.lineDashOffset = -offset;
       ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0;
     } else if (anyH) {
-      ctx.strokeStyle = lit ? 'rgba(255,255,255,.4)' : 'rgba(255,255,255,.04)';
+      ctx.strokeStyle = lit ? `rgba(${ink},.4)` : `rgba(${ink},.04)`;
       ctx.lineWidth = lit ? 0.7 : 0.15; ctx.stroke();
     } else {
-      ctx.strokeStyle = 'rgba(255,255,255,.12)';
+      ctx.strokeStyle = `rgba(${ink},.12)`;
       ctx.lineWidth = 0.5; ctx.stroke();
     }
   });
@@ -296,25 +328,12 @@ export function drawGraph(
     if (n.type === 'cat' || n.type === 'color-group') {
       const c = n.type === 'color-group' ? (n.dominantColor || '#888') : getCatColor(n.cat || '');
       ctx.beginPath(); ctx.arc(n.x, n.y, n.r + (isH ? 2 : 0), 0, Math.PI * 2);
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.15)' : '#fff'; ctx.fill();
-      ctx.strokeStyle = dim ? 'rgba(255,255,255,.1)' : c;
-      ctx.lineWidth = isH ? 2 : 1.2; ctx.stroke();
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.15)' : '#e8e6e0';
+      ctx.fillStyle = dim ? `rgba(${ink},.15)` : c; ctx.fill();
+      if (isH) { ctx.shadowColor = c; ctx.shadowBlur = 12; ctx.fill(); ctx.shadowBlur = 0; }
+      ctx.fillStyle = dim ? `rgba(${ink},.15)` : nc;
       ctx.font = '500 10px JetBrains Mono,monospace';
       ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
       ctx.fillText(n.label, n.x + n.r + 8, n.y);
-
-    } else if (n.type === 'location') {
-      ctx.beginPath(); ctx.arc(n.x, n.y, n.r + (isH ? 1.5 : 0), 0, Math.PI * 2);
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.03)' : LOC_COLOR + '44'; ctx.fill();
-      ctx.strokeStyle = dim ? 'rgba(255,255,255,.06)' : LOC_COLOR + (isH ? 'ee' : '88');
-      ctx.lineWidth = isH ? 1.5 : 1; ctx.stroke();
-      if (zoom > 0.55) {
-        ctx.fillStyle = dim ? 'rgba(255,255,255,.06)' : LOC_COLOR + (isH ? 'ff' : 'bb');
-        ctx.font = '400 8px JetBrains Mono,monospace';
-        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-        ctx.fillText('◉ ' + n.label, n.x + n.r + 6, n.y);
-      }
 
     } else if (n.type === 'photo') {
       const c = n.dominantColor || getCatColor(n.cat || '');
@@ -324,11 +343,11 @@ export function drawGraph(
         ctx.fillStyle = c + '20'; ctx.fill();
       }
       ctx.beginPath(); ctx.arc(n.x, n.y, sz, 0, Math.PI * 2);
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.06)' : isH ? '#fff' : c;
+      ctx.fillStyle = dim ? `rgba(${ink},.06)` : isH ? nc : c;
       ctx.fill();
-      if (isH) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
-      if (zoom > 0.8) {
-        ctx.fillStyle = dim ? 'rgba(255,255,255,.05)' : isH ? '#fff' : 'rgba(255,255,255,.45)';
+      if (isH) { ctx.shadowColor = nc; ctx.shadowBlur = 10; ctx.fill(); ctx.shadowBlur = 0; }
+      if (zoom > 2.0 || isH || inS) {
+        ctx.fillStyle = dim ? `rgba(${ink},.05)` : isH ? nc : `rgba(${ink},.45)`;
         ctx.font = (isH ? '500 ' : '') + '8px JetBrains Mono,monospace';
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
         ctx.fillText(n.label, n.x + n.r + 5, n.y);
@@ -336,10 +355,10 @@ export function drawGraph(
 
     } else {
       ctx.beginPath(); ctx.arc(n.x, n.y, n.r + (isH ? 1 : 0), 0, Math.PI * 2);
-      ctx.fillStyle = dim ? 'rgba(255,255,255,.03)' : isH ? 'rgba(255,255,255,.6)' : 'rgba(255,255,255,.15)';
+      ctx.fillStyle = dim ? `rgba(${ink},.03)` : isH ? `rgba(${ink},.6)` : `rgba(${ink},.25)`;
       ctx.fill();
       if (zoom > 1.2) {
-        ctx.fillStyle = dim ? 'rgba(255,255,255,.04)' : isH ? 'rgba(255,255,255,.8)' : 'rgba(255,255,255,.2)';
+        ctx.fillStyle = dim ? `rgba(${ink},.04)` : isH ? nc : lc;
         ctx.font = '300 7px JetBrains Mono,monospace';
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
         ctx.fillText(n.label, n.x + n.r + 4, n.y);

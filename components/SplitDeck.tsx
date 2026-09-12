@@ -53,7 +53,7 @@ export default function SplitDeck({ project, allPhotos, onClose, onPhotoClick }:
         {project.photos.map(p => (
           <div key={p.file} className="sd-frame" onClick={() => onPhotoClick(p.file)}>
             <BlurImage
-              src={dir ? `/photos/${dir}/${p.file}` : `/photos/${p.file}`}
+              src={p.url || (dir ? `/photos/${dir}/${p.file}` : `/photos/${p.file}`)}
               alt={p.title}
               blur={p.blurDataURL} />
             <div className="sd-frame-title">{p.title}</div>

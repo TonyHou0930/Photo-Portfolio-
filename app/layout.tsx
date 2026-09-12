@@ -14,5 +14,12 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en"><body>{children}</body></html>;
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('portfolio-theme')==='dark')document.documentElement.setAttribute('data-theme','dark')}catch(e){}` }} />
+        {children}
+      </body>
+    </html>
+  );
 }

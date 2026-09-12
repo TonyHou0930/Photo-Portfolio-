@@ -1,11 +1,35 @@
 'use client';
-import { useEffect, useMemo } from 'react';
-import { FlatPhoto, Project, PortfolioData, getRelatedPhotos, exifString } from '@/lib/data';
+import { useEffect, useState } from 'react';
+import { FlatPhoto, Project, getRelatedPhotos, exifString, exifDetails } from '@/lib/data';
+
+function SlitReveal({ photo, slitDir }: { photo: FlatPhoto; slitDir: string }) {
+  const [sharpLoaded, setSharpLoaded] = useState(false);
+
+  return (
+    <div className={`lb-slit lb-slit-open ${slitDir}`}>
+      <div className="lb-hero-wrap">
+        {photo.blurDataURL && (
+          <img src={photo.blurDataURL} alt="" className={`lb-hero-blur${sharpLoaded ? ' lb-hero-blur-out' : ''}`} aria-hidden />
+        )}
+        <img src={photo.url} alt={photo.title} className={`lb-hero${sharpLoaded ? ' lb-hero-sharp' : ''}`}
+          onLoad={() => setSharpLoaded(true)} />
+      </div>
+    </div>
+  );
+}
 
 export default function Lightbox({ photo, allPhotos, projects, onClose, onNavigate }: {
   photo: FlatPhoto; allPhotos: FlatPhoto[]; projects: Project[];
   onClose: () => void; onNavigate: (file: string) => void;
 }) {
+  const [panelReady, setPanelReady] = useState(false);
+
+  useEffect(() => {
+    if (panelReady) return;
+    const t = setTimeout(() => setPanelReady(true), 1200);
+    return () => clearTimeout(t);
+  }, [panelReady]);
+
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', h);
@@ -19,35 +43,43 @@ export default function Lightbox({ photo, allPhotos, projects, onClose, onNaviga
     const shared = p.tags.filter(t => photo.tags.includes(t));
     return shared.length ? '#' + shared[0] : '';
   };
-
-  // Same-project photos (for browsing within project)
   const siblings = allPhotos.filter(p => p.projectId === photo.projectId && p.file !== photo.file);
 
-  return (
-    <div className="lb" onClick={onClose}>
-      <div className="lb-layout" onClick={e => e.stopPropagation()}>
+  const isPortrait = photo.width && photo.height ? photo.height > photo.width : false;
+  const slitDir = isPortrait ? 'slit-portrait' : 'slit-landscape';
 
-        {/* Left: image + EXIF */}
+  return (
+    <div className="lb lb-active" onClick={onClose}>
+      <div className="lb-layout lb-layout-show"
+        onClick={e => e.stopPropagation()}>
+
         <div className="lb-photo-area">
-          <img src={photo.url} alt={photo.title} />
-          {exif && <div className="lb-exif">{exif}</div>}
+          <SlitReveal key={photo.file} photo={photo} slitDir={slitDir} />
+          {exif && <div className={`lb-exif${panelReady ? ' lb-exif-show' : ''}`}>{exif}</div>}
         </div>
 
-        {/* Right: info panel */}
-        <div className="lb-panel">
+        <div className={`lb-panel${panelReady ? ' lb-panel-show' : ''}`}>
           <div className="lb-panel-top">
             <div className="lb-p-title">{photo.title}</div>
             <div className="lb-p-meta">
               {photo.year && <span>{photo.year}</span>}
               {photo.location && <span>◉ {photo.location}</span>}
             </div>
-            {project?.story && (
-              <div className="lb-p-story">{project.story}</div>
+            {photo.story && (
+              <div className="lb-p-story">{photo.story}</div>
             )}
-            {exif && <div className="lb-p-exif">{exif}</div>}
+            {exifDetails(photo).length > 0 && (
+              <div className="lb-exif-grid">
+                {exifDetails(photo).map(item => (
+                  <div key={item.label} className="lb-exif-item">
+                    <span className="lb-exif-label">{item.label}</span>
+                    <span className="lb-exif-value">{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Same project photos */}
           {siblings.length > 0 && (
             <div className="lb-section">
               <div className="lb-sec-label">{project?.title || 'Project'}</div>
@@ -61,7 +93,6 @@ export default function Lightbox({ photo, allPhotos, projects, onClose, onNaviga
             </div>
           )}
 
-          {/* Cross-project related */}
           {related.length > 0 && (
             <div className="lb-section">
               <div className="lb-sec-label">Related</div>
@@ -81,7 +112,7 @@ export default function Lightbox({ photo, allPhotos, projects, onClose, onNaviga
           )}
         </div>
       </div>
-      <button className="lb-close" onClick={onClose}>×</button>
+      <button className={`lb-close${panelReady ? ' lb-close-show' : ''}`} onClick={onClose}>×</button>
     </div>
   );
 }
