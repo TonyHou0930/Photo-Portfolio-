@@ -305,7 +305,7 @@ function MiniGraph({ photos, activeFile, onClickPhoto }: {
 export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph }: {
   project: Project;
   onClose: () => void;
-  onPhotoClick: (file: string) => void;
+  onPhotoClick: (file: string, rect?: { top: number; left: number; width: number; height: number }) => void;
   onViewGraph?: () => void;
 }) {
   const dir = project.dir;
@@ -504,7 +504,11 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
               <div key={p.file} data-file={p.file}
                 ref={el => setPhotoRef(p.file, el)}
                 className={`sv-photo ${isPortrait ? 'sv-portrait' : 'sv-landscape'}`}
-                onClick={() => onPhotoClick(p.file)}>
+                onClick={(e) => {
+                  const img = e.currentTarget.querySelector('img.real-img');
+                  const r = (img || e.currentTarget).getBoundingClientRect();
+                  onPhotoClick(p.file, { top: r.top, left: r.left, width: r.width, height: r.height });
+                }}>
                 <BlurImage src={url} alt={p.title} blur={p.blurDataURL} />
               </div>
             );

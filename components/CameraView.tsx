@@ -49,7 +49,7 @@ function parseAperture(ap?: string): number | null {
 export default function CameraView({ photos, visible, onClickPhoto }: {
   photos: FlatPhoto[];
   visible: boolean;
-  onClickPhoto: (file: string) => void;
+  onClickPhoto: (file: string, rect?: { top: number; left: number; width: number; height: number }) => void;
 }) {
   const [selectedFocal, setSelectedFocal] = useState<number | null>(null);
   const [apertureMax, setApertureMax] = useState<number>(16);
@@ -307,12 +307,18 @@ export default function CameraView({ photos, visible, onClickPhoto }: {
               const ratio = p.width && p.height ? p.width / p.height : 1;
               const aspect = ratio < 0.75 ? 'portrait' : ratio > 1.4 ? 'cine' : 'std';
               return (
-                <div key={p.file} className={`cam-card cam-ar-${aspect}`}
-                  onClick={() => onClickPhoto(p.file)}>
-                  <BlurImage src={p.url} alt={p.title} blur={p.blurDataURL} />
-                  <div className="cam-card-info">
-                    <span>{p.focalLength || '—'}</span>
-                    <span>{p.aperture || '—'}</span>
+                <div key={p.file} className="cam-card-wrap">
+                  <div className={`cam-card cam-ar-${aspect}`}
+                    onClick={(e) => {
+                      const img = e.currentTarget.querySelector('img.real-img');
+                      const r = (img || e.currentTarget).getBoundingClientRect();
+                      onClickPhoto(p.file, { top: r.top, left: r.left, width: r.width, height: r.height });
+                    }}>
+                    <BlurImage src={p.url} alt={p.title} blur={p.blurDataURL} />
+                    <div className="cam-card-info">
+                      <span>{p.focalLength || '—'}</span>
+                      <span>{p.aperture || '—'}</span>
+                    </div>
                   </div>
                 </div>
               );

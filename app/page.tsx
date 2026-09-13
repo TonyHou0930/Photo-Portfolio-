@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
 import Gallery from '@/components/Gallery';
@@ -77,7 +77,10 @@ export default function Home() {
     : filter.type === 'country' ? '🌍 ' + filter.value
     : filter.value;
 
-  const openLightbox = useCallback((file: string) => {
+  const lbSourceRect = useRef<{ top: number; left: number; width: number; height: number } | null>(null);
+
+  const openLightbox = useCallback((file: string, rect?: { top: number; left: number; width: number; height: number }) => {
+    lbSourceRect.current = rect || null;
     setLbFile(file);
   }, []);
 
@@ -220,7 +223,8 @@ export default function Home() {
 
       {lbPhoto && (
         <Lightbox photo={lbPhoto} allPhotos={allPhotos} projects={projects}
-          onClose={() => setLbFile(null)} onNavigate={openLightbox} />
+          onClose={() => setLbFile(null)} onNavigate={openLightbox}
+          sourceRect={lbSourceRect.current} />
       )}
     </div>
   );

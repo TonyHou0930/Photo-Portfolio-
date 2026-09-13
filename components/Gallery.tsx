@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Project } from '@/lib/data';
 
 function BlurImage({ src, alt, blur, onAspect }: {
@@ -67,9 +67,43 @@ export default function Gallery({ projects, visible, onProjectClick }: {
   projects: Project[]; visible: boolean;
   onProjectClick: (projectId: string) => void;
 }) {
+  const colRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = colRef.current;
+    if (!el) return;
+    const cards = el.querySelectorAll('.photo-card-wrap');
+
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 50) {
+        card.classList.add('revealed');
+      }
+    });
+
+    el.classList.add('scroll-reveal');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    cards.forEach(card => {
+      if (!card.classList.contains('revealed')) {
+        observer.observe(card);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, [projects]);
+
   return (
     <div className={`gallery-scroll${visible ? '' : ' off'}`}>
-      <div className="gallery-columns">
+      <div ref={colRef} className="gallery-columns">
         {projects.map(p => (
           <CoverCard key={p.id} project={p} onClick={() => onProjectClick(p.id)} />
         ))}
