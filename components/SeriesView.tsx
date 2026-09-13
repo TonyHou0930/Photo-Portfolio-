@@ -398,7 +398,7 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
             best = { file, ratio };
           }
         });
-        if (best) setActivePhoto(best.file);
+        if (best) setActivePhoto((best as { file: string; ratio: number }).file);
       },
       { root, threshold: [0, 0.33, 0.66, 1] }
     );
