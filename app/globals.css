@@ -359,6 +359,8 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
   .sidebar.off{margin-left:0;transform:translateX(-100%)}
   .gallery-columns{columns:2;column-gap:12px;padding:16px 3%}
   .cam-grid{columns:2}
+  .sv-sidebar{width:35%;min-width:240px;max-width:400px;padding:40px 28px}
+  .sv-title{font-size:26px}
   .lb-layout{flex-direction:column;height:auto;max-height:92vh}
   .lb-photo-area{max-height:55vh}
   .lb-photo-area img{max-height:55vh}
@@ -372,24 +374,45 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 @media (max-width:640px) {
   .sidebar{width:260px}
   .gallery-columns{columns:1;column-gap:0;padding:14px}
-  .cam-grid{columns:1}
+  .cam-grid{columns:2;column-gap:8px}
   .photo-card{padding:6px}
-  .cam-card{padding:6px}
-  .topbar{padding:0 10px;gap:6px}
+  .cam-card{padding:4px}
+  .topbar{padding:0 10px;gap:6px;padding-top:env(safe-area-inset-top)}
   .tb-path{font-size:8px}
   .view-btns{gap:3px}
-  .vb{width:32px;height:32px}
+  .vb{width:36px;height:36px}
   .view-hint{display:none}
+
+  /* Series View: vertical stack */
+  .sv-body{flex-direction:column}
+  .sv-sidebar{width:100%;min-width:0;max-width:100%;position:relative;height:auto;padding:24px 20px;overflow-y:visible}
+  .sv-title{font-size:24px;margin-bottom:10px}
+  .sv-date{font-size:11px;margin-bottom:16px}
+  .sv-story{font-size:14px;line-height:1.8;margin-bottom:20px}
+  .sv-back{font-size:10px;margin-bottom:16px}
+  .sv-graph-section{min-height:280px;margin-top:20px}
+  .sv-mini-graph{min-height:280px}
+  .sv-content{padding:20px 12px 60px;gap:16px}
+  .sv-photo{padding:4px}
+
+  /* Camera View: hide ruler, full-width grid */
+  .cam-ruler{display:none}
+  .cam-center{margin-left:0;padding:12px}
+  .cam-aperture-ring{left:0;padding:0 12px}
+  .cam-status{padding:0 12px}
+  .cam-ap-label{display:none}
+  .cam-ap-stop-label{font-size:7px}
 
   /* Lightbox: full screen vertical */
   .lb-layout{flex-direction:column;max-width:100vw;max-height:100vh;height:100vh;gap:0}
-  .lb-photo-area{flex:1;max-height:60vh}
-  .lb-photo-area img{max-width:100vw;max-height:60vh}
-  .lb-panel{width:100%;min-width:0;max-height:40vh;padding:14px;border-left:none;border-top:.5px solid rgba(255,255,255,.06);flex-direction:column}
+  .lb-photo-area{flex:1;max-height:55vh}
+  .lb-photo-area img{max-width:100vw;max-height:55vh}
+  .lb-panel{width:100%;min-width:0;max-height:45vh;padding:14px;border-left:none;border-top:.5px solid rgba(255,255,255,.06);flex-direction:column;overflow-y:auto}
   .lb-p-title{font-size:16px}
   .lb-exif{font-size:7px;padding:3px 6px}
   .lb-close{top:10px;right:12px;font-size:28px;padding:8px}
   .lb-thumbs{grid-template-columns:repeat(4,1fr)}
+  .lb-related-row{flex-wrap:wrap;gap:10px}
 
   /* Split-deck: vertical stack */
   .sd{flex-direction:column}
@@ -409,6 +432,11 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
   /* Chips */
   .chip{font-size:6px;padding:2px 5px}
   .photo-hover-title{font-size:8px}
+
+  /* Map */
+  .map-card{padding:8px 10px}
+  .map-card-thumb{width:48px;height:32px}
+  .map-card-name{font-size:12px}
 }
 
 /* Touch: larger tap targets, no hover artifacts */
@@ -416,8 +444,10 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
   .photo-card:hover .photo-hover{background:none}
   .photo-card:hover .photo-hover-title{opacity:0}
   .si{padding:9px 16px}
-  .vb{width:34px;height:34px}
+  .vb{width:36px;height:36px}
   .gm-btn{width:36px;height:36px}
+  .cam-card-info{opacity:.7}
+  .cam-card:hover .cam-card-info{opacity:.7}
 }
 /* ═══ MAP VIEW — SVG Fog of War ═══ */
 
