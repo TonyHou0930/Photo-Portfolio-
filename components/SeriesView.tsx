@@ -310,7 +310,9 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
 }) {
   const dir = project.dir;
   const scrollRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const [activePhoto, setActivePhoto] = useState<string | null>(null);
+  const [carouselIdx, setCarouselIdx] = useState(0);
 
   // Slit-reveal stages for hero
   const [stage, setStage] = useState<'loading' | 'reveal' | 'done'>('loading');
@@ -406,6 +408,28 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
     return () => observer.disconnect();
   }, [seriesPhotos]);
 
+  useEffect(() => {
+    const container = contentRef.current;
+    if (!container) return;
+    const handleScroll = () => {
+      if (window.innerWidth > 640) return;
+      const center = container.scrollLeft + container.clientWidth / 2;
+      let closest = 0;
+      let minDist = Infinity;
+      seriesPhotos.forEach((p, i) => {
+        const el = photoRefs.current.get(p.file);
+        if (!el) return;
+        const dist = Math.abs(el.offsetLeft + el.offsetWidth / 2 - center);
+        if (dist < minDist) { minDist = dist; closest = i; }
+      });
+      setCarouselIdx(closest);
+      if (seriesPhotos[closest]) setActivePhoto(seriesPhotos[closest].file);
+    };
+    if (window.innerWidth <= 640) handleScroll();
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [seriesPhotos]);
+
   const activePhotoData = useMemo(() => {
     if (!activePhoto) return null;
     return seriesPhotos.find(p => p.file === activePhoto) || null;
@@ -477,7 +501,7 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
             <div className="sv-photo-story">{metaStory}</div>
           )}
 
-          <div className="sv-graph-section">
+          <div className="sv-graph-section sv-graph-dt">
             <div className="sv-graph-header">
               <span className="sv-graph-label">知識圖譜</span>
               {onViewGraph && (
@@ -489,14 +513,12 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
             <MiniGraph photos={seriesPhotos} activeFile={activePhoto}
               onClickPhoto={(file) => {
                 const el = photoRefs.current.get(file);
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }} />
           </div>
         </div>
 
-        <div className="sv-content">
+        <div className="sv-content" ref={contentRef}>
           {seriesPhotos.map(p => {
             const url = p.url || (dir ? `/photos/${dir}/${p.file}` : `/photos/${p.file}`);
             const isPortrait = p.width && p.height ? p.height > p.width : false;
@@ -509,6 +531,33 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
               </div>
             );
           })}
+        </div>
+
+        <div className="sv-carousel-indicator">
+          <div className="sv-carousel-bar">
+            <div className="sv-carousel-fill" style={{ width: `${((carouselIdx + 1) / Math.max(seriesPhotos.length, 1)) * 100}%` }} />
+          </div>
+          <span className="sv-carousel-count">{carouselIdx + 1} / {seriesPhotos.length}</span>
+        </div>
+
+        <div className="sv-carousel-meta">
+          {metaCamera && <span className="sv-cm-item">{metaCamera}</span>}
+          {metaLocation && <span className="sv-cm-item">◉ {metaLocation}</span>}
+          {metaTags && <span className="sv-cm-tags">{metaTags}</span>}
+        </div>
+
+        <div className="sv-graph-section sv-graph-mb">
+          <div className="sv-graph-header">
+            <span className="sv-graph-label">知識圖譜</span>
+            {onViewGraph && (
+              <button className="sv-graph-link" onClick={onViewGraph}>前往 →</button>
+            )}
+          </div>
+          <MiniGraph photos={seriesPhotos} activeFile={activePhoto}
+            onClickPhoto={(file) => {
+              const el = photoRefs.current.get(file);
+              if (el) el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }} />
         </div>
       </div>
     </div>

@@ -23,11 +23,7 @@ export default function Home() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const saved = localStorage.getItem('portfolio-theme');
-    if (saved === 'dark') {
-      setTheme('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    document.documentElement.removeAttribute('data-theme');
   }, []);
 
   const toggleTheme = useCallback(() => {
