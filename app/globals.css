@@ -135,8 +135,6 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 .sv-photo.sv-portrait .blur-wrap{width:auto;height:100%}
 .sv-photo.sv-portrait .real-img{height:100%;width:auto;max-width:100%}
 
-.sv-edited{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.06em;text-align:center;padding:24px 0 0;opacity:.5}
-
 /* Mobile-only carousel elements (hidden on desktop) */
 .sv-carousel-indicator{display:none;align-items:center;gap:12px;padding:8px 20px 0}
 .sv-carousel-bar{flex:1;height:2px;background:rgba(var(--ink),.08);border-radius:1px;overflow:hidden}
@@ -410,7 +408,6 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
   .sv-photo,.sv-photo.sv-portrait,.sv-photo.sv-landscape{flex:0 0 78vw;scroll-snap-align:center;border-radius:0;overflow:hidden;padding:0;height:100%;width:auto;aspect-ratio:auto;align-items:center;justify-content:center}
   .sv-photo .blur-wrap,.sv-photo.sv-portrait .blur-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
   .sv-photo .real-img,.sv-photo.sv-portrait .real-img,.sv-photo.sv-landscape .real-img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:0}
-  .sv-edited{display:none}
   .sv-carousel-indicator{display:flex;flex-shrink:0}
   .sv-carousel-meta{display:flex;flex-shrink:0}
   .sv-graph-mb{display:flex;flex-direction:column;padding:6px 20px 20px;flex-shrink:0;min-height:160px}

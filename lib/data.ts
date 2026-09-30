@@ -32,7 +32,6 @@ export interface Project {
   music?: string;
   musicTitle?: string;
   musicArtist?: string;
-  lastEdited?: string;
   photos: PhotoItem[];
 }
 
