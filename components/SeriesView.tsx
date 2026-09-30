@@ -531,6 +531,9 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
               </div>
             );
           })}
+          {project.lastEdited && (
+            <div className="sv-edited">最後編輯 {project.lastEdited}</div>
+          )}
         </div>
 
         <div className="sv-carousel-indicator">
