@@ -80,7 +80,7 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 
 /* Hero slit */
 .sv-hero{width:100%;background:#000;display:flex;justify-content:center;align-items:center;position:relative}
-.sv-hero-slit{display:flex;align-items:center;justify-content:center;clip-path:inset(50% 50%)}
+.sv-hero-slit{display:flex;align-items:center;justify-content:center;clip-path:inset(50% 50%);width:100%}
 .sv-hero-slit-open.slit-landscape{animation:slitOpenH 1s cubic-bezier(.25,.9,.3,1) both}
 .sv-hero-slit-open.slit-portrait{animation:slitOpenV .8s cubic-bezier(.25,.9,.3,1) both}
 .sv-hero-blur-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:100%}
