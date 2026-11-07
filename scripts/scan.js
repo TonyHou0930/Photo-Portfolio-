@@ -54,7 +54,7 @@ async function forwardGeocode(locationName) {
 }
 
 async function processImage(fp, ext, baseName, photoDir) {
-  const results = { webpFile: null, blurDataURL: '', dominantColor: '' };
+  const results = { webpFile: null, blurDataURL: '', dominantColor: '', width: undefined, height: undefined };
 
   if (ext !== '.webp' && sharp) {
     const webpFile = baseName + '.webp';
@@ -66,6 +66,14 @@ async function processImage(fp, ext, baseName, photoDir) {
   }
 
   if (sharp) {
+    try {
+      const meta = await sharp(fp).metadata();
+      if (meta.width && meta.height) {
+        const orient = meta.orientation || 1;
+        if (orient >= 5 && orient <= 8) { results.width = meta.height; results.height = meta.width; }
+        else { results.width = meta.width; results.height = meta.height; }
+      }
+    } catch {}
     try {
       const { dominant } = await sharp(fp).resize(4, 4).stats();
       const { r, g, b } = dominant;
@@ -140,7 +148,7 @@ async function processBatch(files, photoDir, existPhotos) {
     const webpKey = baseName + '.webp';
 
     const existEntry = existPhotos.get(file) || existPhotos.get(webpKey);
-    if (existEntry && existEntry.blurDataURL && hasExif(existEntry)) {
+    if (existEntry && existEntry.blurDataURL && hasExif(existEntry) && existEntry.width) {
       return { photo: existEntry, skipped: true, file };
     }
 
@@ -170,6 +178,8 @@ async function processBatch(files, photoDir, existPhotos) {
         tags: existEntry?.tags || [],
         lat: exif.lat ?? existEntry?.lat,
         lng: exif.lng ?? existEntry?.lng,
+        width: img.width ?? existEntry?.width,
+        height: img.height ?? existEntry?.height,
         blurDataURL: img.blurDataURL || existEntry?.blurDataURL || '',
         dominantColor: img.dominantColor || existEntry?.dominantColor || '',
       },

@@ -36,10 +36,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAADQBACdASoUABQAPzmQulgvKaUjqAqp4CcJQBZwAiKZ77/EeZ/RQrcGlaCeURa5kAD+br92mvZxwnXOc8PxCGdDuXEbk/UlFyq2rvwZkLhij01GKtOvCopYfwXm93bXk5VnFVOWON+emmHpqPzqvSBulBjgwJN7rw+xztKSSA5zlyyEBJWrgAAA",
-          "dominantColor": "#080808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAADQBACdASoUABQAPzmQulgvKaUjqAqp4CcJQBZwAiKZ77/EeZ/RQrcGlaCeURa5kAD+br92mvZxwnXOc8PxCGdDuXEbk/UlFyq2rvwZkLhij01GKtOvCopYfwXm93bXk5VnFVOWON+emmHpqPzqvSBulBjgwJN7rw+xztKSSA5zlyyEBJWrgAAA",
+          "dominantColor": "#080808"
         },
         {
           "file": "165A0377.webp",
@@ -58,10 +60,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRsoAAABXRUJQVlA4IL4AAAAwBQCdASoUABQAPzmWwlmvKqcjqAgB4CcJZACdMuu8qBS4zEnLfGmqo8HJ4uLdPgA68AD8YgfTUKctwsaVXi/eAPGuxtbKybDANGAeqQBrOhKMfHOw+qmkAnm4kpL3kQvLgcJDrsrtgR8LW6RILLcvQ4jJ4nEFjnKFJKCkDdUHE0GHDpIGa1YfxvDZe0RvlA2Jo/WIZFe5KII0pdBG/xJfXsu1w57ynWcwVlFJ46ER5p5tsx4sUbzJRu6RLAAA",
-          "dominantColor": "#080808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRsoAAABXRUJQVlA4IL4AAAAwBQCdASoUABQAPzmWwlmvKqcjqAgB4CcJZACdMuu8qBS4zEnLfGmqo8HJ4uLdPgA68AD8YgfTUKctwsaVXi/eAPGuxtbKybDANGAeqQBrOhKMfHOw+qmkAnm4kpL3kQvLgcJDrsrtgR8LW6RILLcvQ4jJ4nEFjnKFJKCkDdUHE0GHDpIGa1YfxvDZe0RvlA2Jo/WIZFe5KII0pdBG/xJfXsu1w57ynWcwVlFJ46ER5p5tsx4sUbzJRu6RLAAA",
+          "dominantColor": "#080808"
         },
         {
           "file": "165A0381.webp",
@@ -80,10 +84,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAAAQBQCdASoUABQAPzmUwFmvKiajqAgB4CcJZgCdIUaBcyiWkzyoRdhsN3D7N/D9vxtAAPKSmkDUBOZ3W6jRq83eq9gU4szKCMOQPywLd1AUZ2/nHr1mna0QXruJIVQAlqMiY7kU151hlvIj7ThCZUbZfCXPT6echBEX0t/QyJr0E2GwDaGcm6L7naV8RZI2KPOnwdzNybaH4m8HfvAsqI0NSTE52qe3qaw5LxZyeoCDQ5KzvbI6kmJzd8NGX4vfquAU1mX/Y4yf0QAA",
-          "dominantColor": "#080808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAAAQBQCdASoUABQAPzmUwFmvKiajqAgB4CcJZgCdIUaBcyiWkzyoRdhsN3D7N/D9vxtAAPKSmkDUBOZ3W6jRq83eq9gU4szKCMOQPywLd1AUZ2/nHr1mna0QXruJIVQAlqMiY7kU151hlvIj7ThCZUbZfCXPT6echBEX0t/QyJr0E2GwDaGcm6L7naV8RZI2KPOnwdzNybaH4m8HfvAsqI0NSTE52qe3qaw5LxZyeoCDQ5KzvbI6kmJzd8NGX4vfquAU1mX/Y4yf0QAA",
+          "dominantColor": "#080808"
         },
         {
           "file": "165A0406.webp",
@@ -102,10 +108,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwBACdASoUABQAPzmUwFmvKiajqAgB4CcJZgCdM1XBqAwQ4ce9bOGeWfyYROIjiYAA9qoZgNhw9mSd1y+hthd5pEX/9PYEEg7R9/Xc3aGOtuFA1H6W4FyOu8AxsUZOVOA8oj3YFOKS0AAA",
-          "dominantColor": "#783808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 4640,
+          "height": 6960,
+          "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwBACdASoUABQAPzmUwFmvKiajqAgB4CcJZgCdM1XBqAwQ4ce9bOGeWfyYROIjiYAA9qoZgNhw9mSd1y+hthd5pEX/9PYEEg7R9/Xc3aGOtuFA1H6W4FyOu8AxsUZOVOA8oj3YFOKS0AAA",
+          "dominantColor": "#783808"
         },
         {
           "file": "165A0409.webp",
@@ -124,10 +132,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRr4AAABXRUJQVlA4ILIAAACQBACdASoUABQAPzmUwFmvKiajqAgB4CcJQBYj6rg0l8Ptv4tF4mAHqRAwxEAA/SZ8SqbDWtETWP3T5qMMBZ3UlHcLKuIVlbRz3txi1f3IY2dfiKmecrV4Mx2Sy2/ZnLi63HhT6+a1yOUcwm/UgHkmKSMDpTXHl/d8uEhlxsJtU5whjhV93XL8BhItE0Lf7TuNeN2eBnGzlZZJmuxMNhx+P3FMQOvKSHRWnBFwHfEbgKwA",
-          "dominantColor": "#080808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 5938,
+          "height": 3959,
+          "blurDataURL": "data:image/webp;base64,UklGRr4AAABXRUJQVlA4ILIAAACQBACdASoUABQAPzmUwFmvKiajqAgB4CcJQBYj6rg0l8Ptv4tF4mAHqRAwxEAA/SZ8SqbDWtETWP3T5qMMBZ3UlHcLKuIVlbRz3txi1f3IY2dfiKmecrV4Mx2Sy2/ZnLi63HhT6+a1yOUcwm/UgHkmKSMDpTXHl/d8uEhlxsJtU5whjhV93XL8BhItE0Lf7TuNeN2eBnGzlZZJmuxMNhx+P3FMQOvKSHRWnBFwHfEbgKwA",
+          "dominantColor": "#080808"
         },
         {
           "file": "165A0424.webp",
@@ -146,10 +156,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAAAQBgCdASoUABQAPzmUwVmvKicjqAgB4CcJagCxHuN/d6nXge8wWhtm9qnzDjJgXxqgb/5OS1wtYagA/GjuITOlCGGL3lYUs3/ldBcPjSg6owiABByDPame/C9TB8Iz/8caP+afOpuK7EqdnEqoiRNwBhfYOUi2r6g6vkzoe+VKRhi8Vr/yR05sVk0AoUAKn2uILu3lbB6SJVnMk6Z8DZeCMIjhqpNwrWLZbkM5QqFmKsEtPAhD/AAA",
-          "dominantColor": "#080808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAAAQBgCdASoUABQAPzmUwVmvKicjqAgB4CcJagCxHuN/d6nXge8wWhtm9qnzDjJgXxqgb/5OS1wtYagA/GjuITOlCGGL3lYUs3/ldBcPjSg6owiABByDPame/C9TB8Iz/8caP+afOpuK7EqdnEqoiRNwBhfYOUi2r6g6vkzoe+VKRhi8Vr/yR05sVk0AoUAKn2uILu3lbB6SJVnMk6Z8DZeCMIjhqpNwrWLZbkM5QqFmKsEtPAhD/AAA",
+          "dominantColor": "#080808"
         },
         {
           "file": "165A0439.webp",
@@ -168,10 +180,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADQBACdASoUABQAPzmSv1mvKaajqAgB4CcJQBibAbEaGG2w252xUMfiBqgkln4wAAD+r9siF0Qj2nQxPrT7rV7i1gumMgIpzdw4/Vekd2UDhOUv0QcSEekYqbeR4KMh4/PMmHLhv4fSMYkDOkvPOkp0OsLPi5FGF+e8Xm2Lvl4BdgYs/2USAFezfakpf1BMSMSdZAq4KLfE9mAAAAA=",
-          "dominantColor": "#a8d8f8",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADQBACdASoUABQAPzmSv1mvKaajqAgB4CcJQBibAbEaGG2w252xUMfiBqgkln4wAAD+r9siF0Qj2nQxPrT7rV7i1gumMgIpzdw4/Vekd2UDhOUv0QcSEekYqbeR4KMh4/PMmHLhv4fSMYkDOkvPOkp0OsLPi5FGF+e8Xm2Lvl4BdgYs/2USAFezfakpf1BMSMSdZAq4KLfE9mAAAAA=",
+          "dominantColor": "#a8d8f8"
         },
         {
           "file": "165A0442.webp",
@@ -190,10 +204,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAQBQCdASoUABQAPzmMuVavKSUjqA1R4CcJYwC7MkCL/gFmZ4FAbCguVrQZZs9izOgAAP7oxl2/CODAf5TIPNozFr/K44SGxQNevb2Z7BTQGx9HZuhHb7MNFr9Tv05WO0JyiS0aC2qj0rHBJCbIUPcnLMlYuLW7v1Q8Q+457EunPWOJARAAAA==",
-          "dominantColor": "#080808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAQBQCdASoUABQAPzmMuVavKSUjqA1R4CcJYwC7MkCL/gFmZ4FAbCguVrQZZs9izOgAAP7oxl2/CODAf5TIPNozFr/K44SGxQNevb2Z7BTQGx9HZuhHb7MNFr9Tv05WO0JyiS0aC2qj0rHBJCbIUPcnLMlYuLW7v1Q8Q+457EunPWOJARAAAA==",
+          "dominantColor": "#080808"
         },
         {
           "file": "165A0446.webp",
@@ -212,10 +228,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAADwBACdASoUABQAPzmUwVmvKicjqAgB4CcJQBecAdf85KQvsLpIOwQFVZc9F/W5uAAA3ieLlSNl6X2HwR9LBMnfrYnR8x6vZrCJHOcIi23P7SZNs9QBh1fs0jfyF0CuDb9DTyM5ydxvIK+I4rCOqnZfoHiqqFKG1ftNrHw2e71OPCd6NhC9PY0qxTYcTK1cqfAAAA==",
-          "dominantColor": "#a89898",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAADwBACdASoUABQAPzmUwVmvKicjqAgB4CcJQBecAdf85KQvsLpIOwQFVZc9F/W5uAAA3ieLlSNl6X2HwR9LBMnfrYnR8x6vZrCJHOcIi23P7SZNs9QBh1fs0jfyF0CuDb9DTyM5ydxvIK+I4rCOqnZfoHiqqFKG1ftNrHw2e71OPCd6NhC9PY0qxTYcTK1cqfAAAA==",
+          "dominantColor": "#a89898"
         },
         {
           "file": "165A0451.webp",
@@ -234,10 +252,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAABwBACdASoUABQAPzmSv1mvKaajqAgB4CcJagDKABEN5Y7ttCdw3/PImBYOAAD+DmqDD+9eQXS3GI63gVm2XMw3lMF1qONgdOi0dXChfebK5ksEZBH9APrIIO8s3f1WcBpGl9U2zN+zubFtHkVM7bLNfhBiSNfQNqBMPt8gNv6IWbMOlAAAAA==",
-          "dominantColor": "#080808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAABwBACdASoUABQAPzmSv1mvKaajqAgB4CcJagDKABEN5Y7ttCdw3/PImBYOAAD+DmqDD+9eQXS3GI63gVm2XMw3lMF1qONgdOi0dXChfebK5ksEZBH9APrIIO8s3f1WcBpGl9U2zN+zubFtHkVM7bLNfhBiSNfQNqBMPt8gNv6IWbMOlAAAAA==",
+          "dominantColor": "#080808"
         },
         {
           "file": "165A0456.webp",
@@ -256,10 +276,12 @@
             "street",
             "people"
           ],
-          "blurDataURL": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAADwBACdASoUABQAPzmUwVmvKicjqAgB4CcJQBgbgiDk9FBCsF4pzsYzb4wx/H7mlAAA+SA6PO5vJz0BnnJttVHhogAwdzBEcI+bAkPfT1kzBKJg4EvwCMGb/e8tQPNClgFb8K/RfRrueD5/+ZcigV//09ju2kYnEesvgGE1881PvbUUqaG7YiALmcTwhnT+XpYAAAAA",
-          "dominantColor": "#080808",
           "lat": 48.13,
-          "lng": 11.55
+          "lng": 11.55,
+          "width": 6960,
+          "height": 4640,
+          "blurDataURL": "data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAADwBACdASoUABQAPzmUwVmvKicjqAgB4CcJQBgbgiDk9FBCsF4pzsYzb4wx/H7mlAAA+SA6PO5vJz0BnnJttVHhogAwdzBEcI+bAkPfT1kzBKJg4EvwCMGb/e8tQPNClgFb8K/RfRrueD5/+ZcigV//09ju2kYnEesvgGE1881PvbUUqaG7YiALmcTwhnT+XpYAAAAA",
+          "dominantColor": "#080808"
         }
       ]
     },
@@ -299,6 +321,8 @@
           ],
           "lat": 48.17,
           "lng": 11.61,
+          "width": 4711,
+          "height": 3140,
           "blurDataURL": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAADQBACdASoUABQAPzmUwVmvKicjqAgB4CcJZQDI1A9lzHvlvQp1pqmzCciSXrDGAAD+g73QypElZ3RDRj0DIixMS8Stf+nEki49YAjFrj3o7JuGFbzm5IVPHrsy67QP/SWX88ZDVWCkc2Mpl4wt350cqRj4Gwc07h7F3fJh1ikAAA==",
           "dominantColor": "#080808"
         },
@@ -321,6 +345,8 @@
           ],
           "lat": 48.17,
           "lng": 11.61,
+          "width": 6960,
+          "height": 4640,
           "blurDataURL": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAACwBACdASoUABQAPzmOuVcvKaUjqA1R4CcJQBibAgu+xnpa1rF/5VDx31hSpXgAAP5IAujcjPkX21iN8jDy9WhXBR6+kC33r/OKEsM8BCkEzPESEYDtLi6SKCRUD1OwJ+crj3F58LuzEL/p//RRnthqHTieo6SYjD1zYM6vU5gAAAAA",
           "dominantColor": "#080808"
         },
@@ -343,6 +369,8 @@
           ],
           "lat": 48.17,
           "lng": 11.61,
+          "width": 6960,
+          "height": 4640,
           "blurDataURL": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAACQBACdASoUABQAPzmSv1mvKaajqAgB4CcJZwAALGe/2b7COv3m5VROC1r8+IAA/qlA1kMwg3HYgp+Blz9K6kwmay5Y9eQzvD3bwMs+AXa9hw2RxJb77u+IUlt41F44HqvI5NVPDn6+YaZ9bub+Rh3GcnLrltGfuCETN47WgAA=",
           "dominantColor": "#080808"
         },
@@ -365,6 +393,8 @@
           ],
           "lat": 48.17,
           "lng": 11.61,
+          "width": 6960,
+          "height": 4640,
           "blurDataURL": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADQBACdASoUABQAPzmUwFmvKiajqAgB4CcJQBjOXkAYQbuz+C5zidykK+N6NMqJgAD+rAszFDAcZ/HCcMQtpjf5KGMZ+SH/MYnv28pEiq6iFukgH7pCnF1lP5NGnf37z3zhPrPVqsZHSfYtiILbvXXk1OKg5cxCi29YnjJswuECTGiLRv6TCAG86iMzv6wuXcJtuCSvA4s6qB9RAAA=",
           "dominantColor": "#080808"
         },
@@ -386,6 +416,8 @@
           ],
           "lat": 48.17,
           "lng": 11.61,
+          "width": 5774,
+          "height": 3850,
           "blurDataURL": "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAABwBACdASoUABQAPzmUwVmvKicjqAgB4CcJZQAAKEHw4pXdmpjIOVfM9oQzYAD+40WkLi1TQ2JAlgWk6g5JJA1fCWlhY/RSWH6k9DD8PIxC0NPZRgVvao8Wh+mVxZmAu38+m6yICEWsmb2lDyZTYZr6c18/c1YC19RhvW2WkGU3wVJ5BQqVlNaOiWruSWG5XLrZpar4kHAAAA==",
           "dominantColor": "#c8c8c8"
         },
@@ -407,6 +439,8 @@
           ],
           "lat": 48.17,
           "lng": 11.61,
+          "width": 6960,
+          "height": 4640,
           "blurDataURL": "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAABQBQCdASoUABQAPzmUwVmvKicjqAgB4CcJZwDO7BEcPwPrAvtgy/6LIayPVEIbHuunDIAA/uvuQ4jY+ORrOrLD0upi8xPpPNP65tyKKEha6S/R9WR55s8SHbR+uxB4Qo0QSx1hmiu3MKPZW3SQKdFfKXwx8eg62lDwJxtyzPr0HKuG3Q3GQ4HWOGgAAA==",
           "dominantColor": "#080808"
         }
@@ -443,6 +477,8 @@
           "tags": [
             "戲劇"
           ],
+          "width": 5472,
+          "height": 3648,
           "blurDataURL": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAACQBACdASoUABQAPzmGulOvKSWisAgB4CcJYwDN71yB0a1kZ+2coMXBkDenSAAA/uvMZ+VLZ4yF1ouhRPVP8EX6Kyhm5OcQuRInmujLBgB5xyRu2jMGLwZpqO0AAA==",
           "dominantColor": "#080808"
         },
@@ -462,6 +498,10 @@
           "tags": [
             "戲劇"
           ],
+          "lat": 24.9987974,
+          "lng": 121.5458587,
+          "width": 5472,
+          "height": 3648,
           "blurDataURL": "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADQAwCdASoUABQAPzmIulOvKSWisAgB4CcJZwAAW+qvufHbaiEa/wAA/uvNwTRlw1VGg7CtO7sUkliPZ/CoU1XEWdzhO7gPEQ6oAAAA",
           "dominantColor": "#080808"
         },
@@ -481,6 +521,10 @@
           "tags": [
             "戲劇"
           ],
+          "lat": 24.9987974,
+          "lng": 121.5458587,
+          "width": 5472,
+          "height": 3648,
           "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADQBACdASoUABQAPyWAs1OuKKSit/qoAcAkiUAW/V5BD76j/v9ik40UWrpY6kR0wAD+8MFO6LFiK+QCe48Q+dbQSXE34QOA2sZUuVydc21V5sju0OW/o+wa/7lsMGWRkOukK0RHv9CA7kAA",
           "dominantColor": "#080808"
         },
@@ -500,6 +544,8 @@
           "tags": [
             "戲劇"
           ],
+          "width": 5472,
+          "height": 3648,
           "blurDataURL": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAQBQCdASoUABQAPzmUwlovKickKAgB4CcJYwDKAA9qrcSG1BxVGQpNBbxc4zDrWU/IAP6+B/TRZy8qgwg/YG1dVZqg3wOJ8KXODolvChBAObV/bdyiGgLphNpBronPwXYOxquxRPbAjZcUbKfzi9lAAAA=",
           "dominantColor": "#080808"
         },
@@ -519,6 +565,10 @@
           "tags": [
             "戲劇"
           ],
+          "lat": 24.9987974,
+          "lng": 121.5458587,
+          "width": 5472,
+          "height": 3648,
           "blurDataURL": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAACwBACdASoUABQAPzmUwFmvKaajqAgB4CcJQBOmUAA1Kbk3+4NI9OGpGKr9OfLAAP7YwZwIl9lnd1fqEgEkurZx/pYC4XfN8+93r4m9hKXcEjbHfPX2lm/1c+3gSUCR0/fSpry0A6hUBqu4GeDsB0YAfW72lEp3sgLWKPQFiSG/QAAA",
           "dominantColor": "#080808"
         },
@@ -538,6 +588,8 @@
           "tags": [
             "戲劇"
           ],
+          "width": 3612,
+          "height": 2403,
           "blurDataURL": "data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAAAwBQCdASoUABQAPzmUwFmvKiajqAgB4CcJQBYdgcjRTe5WMUGOQmOqbB/+QeiuKREeAAD+0ZhD3KpRm9wKUs9jQBVbw+gii8BNQhu2kl2GfWMj93Hn+mRk7FmJoK8Y7mVwMYtn6BlJRLmxtCSNrB4bQC4t/TohvWzYjeh+0dExOiZDoiNAjfyY8ZQMDY91V+2FOAQv0QIz/tQEctpjwO0J4qO3gFKXKAA=",
           "dominantColor": "#080808"
         }
