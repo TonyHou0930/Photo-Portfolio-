@@ -20,6 +20,72 @@
       "musicArtist": "",
       "photos": [
         {
+          "file": "165A0377.webp",
+          "originalFile": "165A0377.JPG",
+          "title": "序幕",
+          "story": "",
+          "featured": false,
+          "location": "Munich, Germany",
+          "year": "2026",
+          "camera": "Canon EOS R6 Mark III",
+          "focalLength": "72mm",
+          "aperture": "f/4.0",
+          "shutterSpeed": "1/60s",
+          "iso": "ISO 125",
+          "tags": [
+            "street",
+            "people"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRsoAAABXRUJQVlA4IL4AAAAwBQCdASoUABQAPzmWwlmvKqcjqAgB4CcJZACdMuu8qBS4zEnLfGmqo8HJ4uLdPgA68AD8YgfTUKctwsaVXi/eAPGuxtbKybDANGAeqQBrOhKMfHOw+qmkAnm4kpL3kQvLgcJDrsrtgR8LW6RILLcvQ4jJ4nEFjnKFJKCkDdUHE0GHDpIGa1YfxvDZe0RvlA2Jo/WIZFe5KII0pdBG/xJfXsu1w57ynWcwVlFJ46ER5p5tsx4sUbzJRu6RLAAA",
+          "dominantColor": "#080808",
+          "lat": 48.13,
+          "lng": 11.55
+        },
+        {
+          "file": "165A0381.webp",
+          "originalFile": "165A0381.JPG",
+          "title": "乾杯",
+          "story": "",
+          "featured": false,
+          "location": "Munich, Germany",
+          "year": "2026",
+          "camera": "Canon EOS R6 Mark III",
+          "focalLength": "24mm",
+          "aperture": "f/4.0",
+          "shutterSpeed": "1/80s",
+          "iso": "ISO 500",
+          "tags": [
+            "street",
+            "people"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAAAQBQCdASoUABQAPzmUwFmvKiajqAgB4CcJZgCdIUaBcyiWkzyoRdhsN3D7N/D9vxtAAPKSmkDUBOZ3W6jRq83eq9gU4szKCMOQPywLd1AUZ2/nHr1mna0QXruJIVQAlqMiY7kU151hlvIj7ThCZUbZfCXPT6echBEX0t/QyJr0E2GwDaGcm6L7naV8RZI2KPOnwdzNybaH4m8HfvAsqI0NSTE52qe3qaw5LxZyeoCDQ5KzvbI6kmJzd8NGX4vfquAU1mX/Y4yf0QAA",
+          "dominantColor": "#080808",
+          "lat": 48.13,
+          "lng": 11.55
+        },
+        {
+          "file": "165A0406.webp",
+          "originalFile": "165A0406.JPG",
+          "title": "Das Original",
+          "story": "",
+          "featured": false,
+          "location": "Munich, Germany",
+          "year": "2026",
+          "camera": "Canon EOS R6 Mark III",
+          "focalLength": "105mm",
+          "aperture": "f/4.0",
+          "shutterSpeed": "1/80s",
+          "iso": "ISO 1250",
+          "tags": [
+            "street",
+            "people"
+          ],
+          "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwBACdASoUABQAPzmUwFmvKiajqAgB4CcJZgCdM1XBqAwQ4ce9bOGeWfyYROIjiYAA9qoZgNhw9mSd1y+hthd5pEX/9PYEEg7R9/Xc3aGOtuFA1H6W4FyOu8AxsUZOVOA8oj3YFOKS0AAA",
+          "dominantColor": "#783808",
+          "lat": 48.13,
+          "lng": 11.55
+        },
+        {
           "file": "165A0409.webp",
           "originalFile": "165A0409.JPG",
           "title": "沸騰",
