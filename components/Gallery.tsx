@@ -28,7 +28,13 @@ function aspectClass(ratio: number): string {
   return 'pc-std';
 }
 
-function CoverCard({ project, onClick }: { project: Project; onClick: () => void }) {
+export type CardRect = {
+  x: number; y: number; w: number; h: number;
+  src: string; blur?: string;
+  cx: number; cy: number;
+};
+
+function CoverCard({ project, onClick }: { project: Project; onClick: (rect: CardRect) => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const dir = project.dir;
   const coverFile = project.cover;
@@ -36,7 +42,6 @@ function CoverCard({ project, onClick }: { project: Project; onClick: () => void
   const coverUrl = coverPhoto?.url || (dir ? `/photos/${dir}/${coverFile}` : `/photos/${coverFile}`);
   const blur = coverPhoto?.blurDataURL;
 
-  // Pre-calculate aspect ratio if dimensions are available
   const preAspect = coverPhoto?.width && coverPhoto?.height
     ? aspectClass(coverPhoto.width / coverPhoto.height) : '';
 
@@ -47,9 +52,18 @@ function CoverCard({ project, onClick }: { project: Project; onClick: () => void
     el.classList.add(aspectClass(ratio));
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    const el = cardRef.current;
+    if (!el) { onClick({ x: 0, y: 0, w: 0, h: 0, src: coverUrl, blur, cx: e.clientX, cy: e.clientY }); return; }
+    const img = el.querySelector('.real-img') as HTMLImageElement | null;
+    const target = img || el;
+    const r = target.getBoundingClientRect();
+    onClick({ x: r.left, y: r.top, w: r.width, h: r.height, src: coverUrl, blur, cx: e.clientX, cy: e.clientY });
+  };
+
   return (
     <div className="photo-card-wrap">
-      <div ref={cardRef} className={`photo-card${preAspect ? ' ' + preAspect : ''}`} onClick={onClick}>
+      <div ref={cardRef} className={`photo-card${preAspect ? ' ' + preAspect : ''}`} onClick={handleClick}>
         <BlurImage src={coverUrl} alt={project.title} blur={blur} onAspect={handleAspect} />
         <div className="photo-chips">
           {project.year && <span className="chip chip-year">{project.year}</span>}
@@ -65,7 +79,7 @@ function CoverCard({ project, onClick }: { project: Project; onClick: () => void
 
 export default function Gallery({ projects, visible, onProjectClick }: {
   projects: Project[]; visible: boolean;
-  onProjectClick: (projectId: string) => void;
+  onProjectClick: (projectId: string, rect?: CardRect) => void;
 }) {
   const colRef = useRef<HTMLDivElement>(null);
 
@@ -105,7 +119,7 @@ export default function Gallery({ projects, visible, onProjectClick }: {
     <div className={`gallery-scroll${visible ? '' : ' off'}`}>
       <div ref={colRef} className="gallery-columns">
         {projects.map(p => (
-          <CoverCard key={p.id} project={p} onClick={() => onProjectClick(p.id)} />
+          <CoverCard key={p.id} project={p} onClick={(rect) => onProjectClick(p.id, rect)} />
         ))}
       </div>
     </div>

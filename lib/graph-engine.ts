@@ -223,9 +223,11 @@ function buildTimeline(photos: FlatPhoto[], w: number, h: number): { nodes: GNod
 // ── SIMULATE ───────────────────────────────────────────────────
 export function simulate(
   nodes: GNode[], edges: GEdge[], w: number, h: number,
-  dragId: string | null, mouseGX?: number, mouseGY?: number
+  dragId: string | null, mouseGX?: number, mouseGY?: number,
+  nodeMap?: Map<string, GNode>
 ): number {
-  for (let i = 0; i < nodes.length; i++) {
+  const len = nodes.length;
+  for (let i = 0; i < len; i++) {
     const n = nodes[i];
     n.vx += (n.gx - n.x) * .025;
     n.vy += (n.gy - n.y) * .025;
@@ -236,12 +238,14 @@ export function simulate(
         n.vx += dx / dist * 0.3; n.vy += dy / dist * 0.3;
       }
     }
-    for (let j = i + 1; j < nodes.length; j++) {
+    const cap = len > 300 ? Math.min(i + 150, len) : len;
+    for (let j = i + 1; j < cap; j++) {
       const m = nodes[j];
       const dx = n.x - m.x, dy = n.y - m.y;
-      const d = Math.sqrt(dx * dx + dy * dy) || .1;
+      const dsq = dx * dx + dy * dy;
       const minD = (n.r + m.r) * 3 + 18;
-      if (d < minD) {
+      if (dsq < minD * minD) {
+        const d = Math.sqrt(dsq) || .1;
         const f = (minD - d) * .04;
         n.vx += dx / d * f; n.vy += dy / d * f;
         m.vx -= dx / d * f; m.vy -= dy / d * f;
@@ -254,8 +258,10 @@ export function simulate(
       n.y = Math.max(40, Math.min(h - 40, n.y));
     }
   }
+  const map = nodeMap;
   for (const e of edges) {
-    const a = nodes.find(n => n.id === e.a), b = nodes.find(n => n.id === e.b);
+    const a = map ? map.get(e.a) : nodes.find(n => n.id === e.a);
+    const b = map ? map.get(e.b) : nodes.find(n => n.id === e.b);
     if (!a || !b) continue;
     const dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || .1;
     const tgt = e.type === 'tag' ? 35 : e.type === 'color' ? 45 : 55;
@@ -273,7 +279,8 @@ export function drawGraph(
   ctx: CanvasRenderingContext2D, nodes: GNode[], edges: GEdge[],
   w: number, h: number, hovId: string | null, zoom: number,
   visited: Set<string>, mode: GraphMode,
-  theme?: { ink: string; node: string; label: string }
+  theme?: { ink: string; node: string; label: string },
+  nodeMap?: Map<string, GNode>
 ) {
   const ink = theme?.ink || '0,0,0';
   const nc = theme?.node || '#2c2824';
@@ -287,7 +294,8 @@ export function drawGraph(
   const anyH = !!hovId;
 
   edges.forEach(e => {
-    const a = nodes.find(n => n.id === e.a), b = nodes.find(n => n.id === e.b);
+    const a = nodeMap ? nodeMap.get(e.a) : nodes.find(n => n.id === e.a);
+    const b = nodeMap ? nodeMap.get(e.b) : nodes.find(n => n.id === e.b);
     if (!a || !b) return;
     const lit = hE.has(e);
     const isVisited = visited.has(a.id) && visited.has(b.id);

@@ -1,40 +1,9 @@
 'use client';
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { Project, PhotoItem } from '@/lib/data';
+import { useScrambleText } from '@/lib/scramble';
 
 const GLITCH_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!?/<>[]{}=+~^';
-
-function useScrambleText(target: string, active: boolean, onDone?: () => void) {
-  const [text, setText] = useState('');
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const stop = useCallback(() => {
-    if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
-  }, []);
-  useEffect(() => {
-    if (!active) { stop(); return; }
-    let frame = 0;
-    const len = target.length;
-    const totalFrames = Math.max(len * 3, 20);
-    intervalRef.current = setInterval(() => {
-      frame++;
-      const resolved = Math.floor((frame / totalFrames) * len);
-      let out = '';
-      for (let i = 0; i < len; i++) {
-        if (target[i] === ' ') { out += ' '; continue; }
-        if (i < resolved) { out += target[i]; }
-        else { out += GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]; }
-      }
-      setText(out);
-      if (resolved >= len) {
-        stop();
-        setText(target);
-        onDone?.();
-      }
-    }, 35);
-    return stop;
-  }, [target, active, stop, onDone]);
-  return text;
-}
 
 function ScrambleValue({ value }: { value: string }) {
   const [display, setDisplay] = useState(value);
@@ -302,11 +271,12 @@ function MiniGraph({ photos, activeFile, onClickPhoto }: {
   );
 }
 
-export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph }: {
+export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph, skipIntro }: {
   project: Project;
   onClose: () => void;
   onPhotoClick: (file: string) => void;
   onViewGraph?: () => void;
+  skipIntro?: boolean;
 }) {
   const dir = project.dir;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -315,8 +285,8 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
   const [carouselIdx, setCarouselIdx] = useState(0);
 
   // Slit-reveal stages for hero
-  const [stage, setStage] = useState<'loading' | 'reveal' | 'done'>('loading');
-  const [scrambleDone, setScrambleDone] = useState(false);
+  const [stage, setStage] = useState<'loading' | 'reveal' | 'done'>(skipIntro ? 'reveal' : 'loading');
+  const [scrambleDone, setScrambleDone] = useState(!!skipIntro);
   const [sharpLoaded, setSharpLoaded] = useState(false);
   const prevProjectId = useRef(project.id);
 

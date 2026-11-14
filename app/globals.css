@@ -55,7 +55,8 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 .proj-label{display:none}
 
 /* Photo card — museum-style dynamic borders */
-.photo-card{cursor:pointer;position:relative;background:var(--frame);padding:12px;transition:background .4s}
+.photo-card{cursor:pointer;position:relative;background:var(--frame);padding:12px;transition:background .4s,transform .15s ease}
+.photo-card:active{transform:scale(.97)}
 .photo-card.pc-portrait{padding:6px 48px}
 .photo-card.pc-cine{padding:40px 6px}
 .photo-card.pc-std{padding:12px}
@@ -499,6 +500,13 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
   .map-card-name{font-size:13px}
   .map-bottom-stats{font-size:7px;bottom:12px}
 }
+
+/* ═══ CLICK TRANSITION (Auge-style) — all motion via Web Animations API ═══ */
+.click-overlay{position:fixed;inset:0;z-index:200;pointer-events:none;overflow:hidden}
+.click-bg{position:absolute;left:-5%;bottom:0;width:110%;height:100%;background:#ede5c4;z-index:1;will-change:transform}
+.click-image{position:absolute;overflow:hidden;z-index:3;will-change:transform;box-shadow:0 16px 48px rgba(0,0,0,.12)}
+.click-img{width:100%;height:100%;object-fit:cover;display:block}
+.click-title{position:absolute;left:50%;z-index:3;font-family:'Noto Sans TC',sans-serif;font-size:clamp(28px,5vw,44px);font-weight:700;color:var(--t1);text-align:center;letter-spacing:.02em;white-space:nowrap;will-change:transform,opacity}
 
 /* ═══ DARK THEME COMPONENT OVERRIDES ═══ */
 [data-theme="dark"] .sb-home:hover{background:rgba(255,255,255,.03)}

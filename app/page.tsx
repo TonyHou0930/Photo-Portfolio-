@@ -1,17 +1,23 @@
 'use client';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Topbar from '@/components/Topbar';
-import Gallery from '@/components/Gallery';
+import Gallery, { CardRect } from '@/components/Gallery';
 import GraphView from '@/components/GraphView';
 import CameraView from '@/components/CameraView';
 import MapView from '@/components/MapView';
 import SeriesView from '@/components/SeriesView';
 import Lightbox from '@/components/Lightbox';
 import { PortfolioData, Project, FlatPhoto, flattenPhotos, matchCountry } from '@/lib/data';
+import { useScrambleText } from '@/lib/scramble';
 
 type Filter = { type: string; value: string };
 type ViewMode = 'gallery' | 'graph' | 'camera' | 'map';
+
+function ClickTitle({ target, active, fallback }: { target: string; active: boolean; fallback: string }) {
+  const text = useScrambleText(target, active);
+  return <>{text || fallback}</>;
+}
 
 export default function Home() {
   const [data, setData] = useState<PortfolioData>({ projects: [] });
@@ -21,6 +27,15 @@ export default function Home() {
   const [seriesProject, setSeriesProject] = useState<Project | null>(null);
   const [lbFile, setLbFile] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [skipIntro, setSkipIntro] = useState(false);
+  const [scrambleActive, setScrambleActive] = useState(false);
+  const clickAnimsRef = useRef<Animation[]>([]);
+  const [clickTransition, setClickTransition] = useState<{
+    rect: CardRect;
+    title: string;
+    phase: 'start' | 'done';
+    final: { x: number; y: number; w: number; h: number };
+  } | null>(null);
 
   useEffect(() => {
     document.documentElement.removeAttribute('data-theme');
@@ -84,19 +99,112 @@ export default function Home() {
     return { src: data.defaultMusic || '', title: data.defaultMusicTitle || '', artist: data.defaultMusicArtist || '' };
   }, [seriesProject, data]);
 
-  const openSeries = useCallback((projectId: string) => {
+  const openSeries = useCallback((projectId: string, rect?: CardRect) => {
     const proj = projects.find(p => p.id === projectId || p.title === projectId);
-    if (proj) { setSeriesProject(proj); setSbOff(true); }
+    if (!proj) return;
+    if (rect && rect.w > 0) {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const finalW = Math.min(480, vw * 0.48);
+      const finalH = (rect.h / rect.w) * finalW;
+      const finalX = (vw - finalW) / 2;
+      const finalY = vh * 0.16;
+      const final = { x: finalX, y: finalY, w: finalW, h: finalH };
+
+      setSkipIntro(true);
+      setClickTransition({ rect, title: proj.title, phase: 'start', final });
+
+      requestAnimationFrame(() => {
+        const imgEl = document.querySelector('.click-image') as HTMLElement;
+        const bgEl = document.querySelector('.click-bg') as HTMLElement;
+        const titleEl = document.querySelector('.click-title') as HTMLElement;
+        if (!imgEl || !bgEl) return;
+
+        const EASE_OUT = 'cubic-bezier(.22,1,.36,1)';
+        const EASE_IN = 'cubic-bezier(.55,0,1,.45)';
+
+        const dx = rect.x - finalX;
+        const dy = rect.y - finalY;
+        const sx = rect.w / finalW;
+        const sy = rect.h / finalH;
+
+        imgEl.style.transformOrigin = '0 0';
+        imgEl.animate([
+          { filter: 'brightness(1)' },
+          { filter: 'brightness(1.15)', offset: 0.3 },
+          { filter: 'brightness(1)' },
+        ], { duration: 350, easing: 'ease-out' });
+
+        const imgEntry = imgEl.animate([
+          { transform: `translate(${dx}px,${dy}px) scale(${sx},${sy})` },
+          { transform: 'translate(0,0) scale(1,1)' },
+        ], { duration: 800, easing: EASE_OUT, fill: 'forwards' });
+
+        const bgEntry = bgEl.animate([
+          { transform: 'translateY(100%)', borderRadius: '50% 50% 0 0 / 10% 10% 0 0' },
+          { transform: 'translateY(0)', borderRadius: '0' },
+        ], { duration: 700, easing: EASE_OUT, fill: 'forwards' });
+
+        clickAnimsRef.current = [imgEntry, bgEntry];
+
+        setTimeout(() => {
+          setScrambleActive(true);
+          if (titleEl) {
+            titleEl.animate([
+              { opacity: 0, transform: 'translateX(-50%) translateY(16px)' },
+              { opacity: 1, transform: 'translateX(-50%) translateY(0)' },
+            ], { duration: 500, easing: EASE_OUT, fill: 'forwards' });
+          }
+        }, 900);
+
+        setTimeout(() => { setSeriesProject(proj); setSbOff(true); }, 2400);
+
+        setTimeout(() => {
+          imgEl.style.transform = 'translate(0,0) scale(1,1)';
+          bgEl.style.transform = 'translateY(0)';
+          bgEl.style.borderRadius = '0';
+          clickAnimsRef.current.forEach(a => a.cancel());
+          clickAnimsRef.current = [];
+
+          imgEl.animate([
+            { transform: 'translate(0,0) scale(1,1)' },
+            { transform: 'translate(0,-110vh) scale(1,1)' },
+          ], { duration: 700, easing: EASE_IN, fill: 'forwards' });
+
+          if (titleEl) {
+            titleEl.animate([
+              { opacity: 1, transform: 'translateX(-50%) translateY(0)' },
+              { opacity: 0, transform: 'translateX(-50%) translateY(-110vh)' },
+            ], { duration: 700, easing: EASE_IN, fill: 'forwards' });
+          }
+
+          setTimeout(() => {
+            bgEl.style.transform = '';
+            bgEl.animate([
+              { transform: 'translateY(0)', borderRadius: '0' },
+              { transform: 'translateY(-100%)', borderRadius: '0 0 50% 50% / 0 0 12% 12%' },
+            ], { duration: 800, easing: EASE_OUT, fill: 'forwards' });
+          }, 400);
+        }, 2700);
+
+        setTimeout(() => {
+          setClickTransition(null);
+          setScrambleActive(false);
+        }, 4000);
+      });
+    } else {
+      setSeriesProject(proj); setSbOff(true);
+    }
   }, [projects]);
 
-  const handleFilter = useCallback((f: Filter) => {
+  const handleFilter = useCallback((f: Filter, rect?: CardRect) => {
     const isMobile = window.innerWidth <= 1024;
-    if (f.type === 'project') { openSeries(f.value); setFilter(f); return; }
+    if (f.type === 'project') { openSeries(f.value, rect); setFilter(f); return; }
     setSeriesProject(null); setSbOff(isMobile); setFilter(f);
   }, [openSeries]);
 
   const closeSeries = useCallback(() => {
-    setSeriesProject(null); setSbOff(window.innerWidth <= 1024); setFilter({ type: 'all', value: 'all' });
+    setSeriesProject(null); setSbOff(window.innerWidth <= 1024); setFilter({ type: 'all', value: 'all' }); setSkipIntro(false);
   }, []);
 
   const goHome = useCallback(() => {
@@ -164,11 +272,12 @@ export default function Home() {
           {seriesProject ? (
             <SeriesView project={seriesProject}
               onClose={closeSeries} onPhotoClick={openLightbox}
+              skipIntro={skipIntro}
               onViewGraph={() => { setSeriesProject(null); setView('graph'); setSbOff(window.innerWidth <= 1024); }} />
           ) : (
             <>
               <Gallery projects={projects} visible={view === 'gallery'}
-                onProjectClick={openSeries} />
+                onProjectClick={(id, rect) => openSeries(id, rect)} />
               <GraphView photos={graphFiltered} visible={view === 'graph'}
                 onClickCat={onGraphCatClick}
                 onClickPhoto={openLightbox} />
@@ -217,6 +326,28 @@ export default function Home() {
       {lbPhoto && (
         <Lightbox photo={lbPhoto} allPhotos={allPhotos} projects={projects}
           onClose={() => setLbFile(null)} onNavigate={openLightbox} />
+      )}
+
+      {clickTransition && (
+        <div className="click-overlay">
+          <div className="click-bg" style={{ transform: 'translateY(100%)' }} />
+          <div className="click-image" style={{
+              left: clickTransition.final.x,
+              top: clickTransition.final.y,
+              width: clickTransition.final.w,
+              height: clickTransition.final.h,
+              transformOrigin: '0 0',
+            }}>
+            <img src={clickTransition.rect.src} alt="" className="click-img" />
+          </div>
+          <div className="click-title" style={{
+            top: clickTransition.final.y + clickTransition.final.h + 28,
+            opacity: 0,
+            transform: 'translateX(-50%)',
+          }}>
+            <ClickTitle target={clickTransition.title} active={scrambleActive} fallback={clickTransition.title} />
+          </div>
+        </div>
       )}
     </div>
   );
