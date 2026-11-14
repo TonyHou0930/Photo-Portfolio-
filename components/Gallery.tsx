@@ -21,6 +21,7 @@ function BlurImage({ src, alt, blur, onAspect, priority, width, height }: {
           placeholder={blur ? 'blur' : 'empty'}
           blurDataURL={blur}
           sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
+          style={{ width: '100%', height: 'auto' }}
           className={`real-img${loaded ? ' in' : ''}`}
           onLoad={(e) => {
             setLoaded(true);
