@@ -1,23 +1,46 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Project } from '@/lib/data';
 
-function BlurImage({ src, alt, blur, onAspect }: {
+function BlurImage({ src, alt, blur, onAspect, priority, width, height }: {
   src: string; alt: string; blur?: string;
   onAspect?: (ratio: number) => void;
+  priority?: boolean;
+  width?: number; height?: number;
 }) {
   const [loaded, setLoaded] = useState(false);
   return (
     <div className="blur-wrap">
-      {blur && <img src={blur} alt="" className={`blur-bg${loaded ? ' out' : ''}`} aria-hidden />}
-      <img src={src} alt={alt} loading="lazy" className={`real-img${loaded ? ' in' : ''}`}
-        onLoad={(e) => {
-          setLoaded(true);
-          const img = e.currentTarget;
-          if (onAspect && img.naturalWidth && img.naturalHeight) {
-            onAspect(img.naturalWidth / img.naturalHeight);
-          }
-        }} />
+      {blur && !priority && <img src={blur} alt="" className={`blur-bg${loaded ? ' out' : ''}`} aria-hidden />}
+      {width && height ? (
+        <Image
+          src={src} alt={alt}
+          width={width} height={height}
+          priority={priority}
+          placeholder={blur ? 'blur' : 'empty'}
+          blurDataURL={blur}
+          sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
+          className={`real-img${loaded ? ' in' : ''}`}
+          onLoad={(e) => {
+            setLoaded(true);
+            const img = e.currentTarget as HTMLImageElement;
+            if (onAspect && img.naturalWidth && img.naturalHeight) {
+              onAspect(img.naturalWidth / img.naturalHeight);
+            }
+          }}
+        />
+      ) : (
+        <img src={src} alt={alt} loading={priority ? 'eager' : 'lazy'}
+          className={`real-img${loaded ? ' in' : ''}`}
+          onLoad={(e) => {
+            setLoaded(true);
+            const img = e.currentTarget;
+            if (onAspect && img.naturalWidth && img.naturalHeight) {
+              onAspect(img.naturalWidth / img.naturalHeight);
+            }
+          }} />
+      )}
     </div>
   );
 }
@@ -34,7 +57,7 @@ export type CardRect = {
   cx: number; cy: number;
 };
 
-function CoverCard({ project, onClick }: { project: Project; onClick: (rect: CardRect) => void }) {
+function CoverCard({ project, onClick, priority }: { project: Project; onClick: (rect: CardRect) => void; priority?: boolean }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const dir = project.dir;
   const coverFile = project.cover;
@@ -64,7 +87,8 @@ function CoverCard({ project, onClick }: { project: Project; onClick: (rect: Car
   return (
     <div className="photo-card-wrap">
       <div ref={cardRef} className={`photo-card${preAspect ? ' ' + preAspect : ''}`} onClick={handleClick}>
-        <BlurImage src={coverUrl} alt={project.title} blur={blur} onAspect={handleAspect} />
+        <BlurImage src={coverUrl} alt={project.title} blur={blur} onAspect={handleAspect}
+          priority={priority} width={coverPhoto?.width} height={coverPhoto?.height} />
         <div className="photo-chips">
           {project.year && <span className="chip chip-year">{project.year}</span>}
           {project.location && <span className="chip chip-loc">◉ {project.location}</span>}
@@ -118,8 +142,9 @@ export default function Gallery({ projects, visible, onProjectClick }: {
   return (
     <div className={`gallery-scroll${visible ? '' : ' off'}`}>
       <div ref={colRef} className="gallery-columns">
-        {projects.map(p => (
-          <CoverCard key={p.id} project={p} onClick={(rect) => onProjectClick(p.id, rect)} />
+        {projects.map((p, i) => (
+          <CoverCard key={p.id} project={p} priority={i < 3}
+            onClick={(rect) => onProjectClick(p.id, rect)} />
         ))}
       </div>
     </div>
