@@ -15,13 +15,19 @@ const MapView = lazy(() => import('@/components/MapView'));
 type Filter = { type: string; value: string };
 type ViewMode = 'gallery' | 'graph' | 'camera' | 'map';
 
+function charWidth(ch: string) {
+  if (ch === ' ') return '.3em';
+  if (/[一-鿿㐀-䶿]/.test(ch)) return '1.1em';
+  return '0.6em';
+}
+
 function ClickTitle({ target, active, fallback }: { target: string; active: boolean; fallback: string }) {
   const text = useScrambleText(target, active);
   const display = text || fallback;
   return (
     <>
       {target.split('').map((ch, i) => (
-        <span key={i} style={{ width: ch === ' ' ? '.3em' : '1.1em' }}>
+        <span key={i} style={{ width: charWidth(ch) }}>
           {display[i] ?? ch}
         </span>
       ))}

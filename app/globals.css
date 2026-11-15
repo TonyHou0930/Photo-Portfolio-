@@ -507,7 +507,7 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 .click-bg{position:absolute;left:-5%;bottom:0;width:110%;height:100%;background:#e8e8e8;z-index:1;will-change:transform}
 .click-image{position:absolute;overflow:hidden;z-index:3;will-change:transform;box-shadow:0 16px 48px rgba(0,0,0,.12)}
 .click-img{width:100%;height:100%;object-fit:cover;display:block}
-.click-title{position:absolute;left:50%;z-index:3;font-family:'Noto Sans TC',sans-serif;font-size:clamp(32px,5.5vw,52px);font-weight:700;color:#2c2824;text-align:center;letter-spacing:.02em;white-space:nowrap;will-change:transform,opacity}
+.click-title{position:absolute;left:50%;z-index:3;font-family:'Noto Sans TC',sans-serif;font-size:clamp(32px,5.5vw,52px);font-weight:700;color:#2c2824;text-align:center;letter-spacing:.02em;will-change:transform,opacity;display:flex;flex-wrap:wrap;justify-content:center;max-width:90vw}
 .click-title span{display:inline-block;text-align:center}
 
 /* ═══ DARK THEME COMPONENT OVERRIDES ═══ */
