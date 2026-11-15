@@ -54,8 +54,7 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 .proj-label{display:none}
 
 /* Photo card — museum-style dynamic borders */
-.photo-card{cursor:pointer;position:relative;background:var(--frame);padding:12px;transition:background .4s,transform .15s ease,box-shadow .3s ease}
-.photo-card:hover{box-shadow:0 8px 30px rgba(0,0,0,.15)}
+.photo-card{cursor:pointer;position:relative;background:var(--frame);padding:12px;transition:background .4s,transform .15s ease}
 .photo-card:active{transform:scale(.97)}
 .photo-card.pc-portrait{padding:6px 48px}
 .photo-card.pc-cine{padding:40px 6px}
@@ -463,7 +462,6 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 
 /* Touch: larger tap targets, no hover artifacts */
 @media (hover:none) {
-  .photo-card:hover{box-shadow:none}
   .photo-card:hover .photo-hover{background:none}
   .photo-card:hover .photo-hover-title{opacity:0}
   .si{padding:9px 16px}
