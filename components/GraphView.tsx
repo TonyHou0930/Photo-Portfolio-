@@ -14,7 +14,6 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const tipRef = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<GraphMode>('graph');
   const [extractedColors, setExtractedColors] = useState<Map<string, string>>(new Map());
   const hasInitRef = useRef(false);
@@ -219,12 +218,6 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
           if (s.dragId) { const n = s.nodes.find(x => x.id === s.dragId); if (n) { n.x = gx - s.dox; n.y = gy - s.doy; n.gx = n.x; n.gy = n.y; n.vx = 0; n.vy = 0; } wake(); return; }
           const n = getN(mx, my); s.hovId = n?.id || null;
           canvasRef.current!.style.cursor = n ? (n.type === 'photo' || n.type === 'cat' || n.type === 'color-group' ? 'pointer' : 'grab') : 'grab';
-          const tip = tipRef.current;
-          if (tip && n && n.type === 'photo') {
-            tip.classList.add('on'); tip.style.left = Math.min(mx + 14, canvasRef.current!.clientWidth - 200) + 'px'; tip.style.top = Math.max(my - 16, 4) + 'px';
-            tip.querySelector('.gt-t')!.textContent = n.label;
-            tip.querySelector('.gt-tg')!.innerHTML = (n.tags || []).map(t => `<span class="gt-ti">#${t}</span>`).join('');
-          } else tip?.classList.remove('on');
           wake();
         }}
         onMouseDown={e => {
@@ -261,7 +254,7 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
           }
           s.dragId = null; s.isPanning = false; s.mouseDownPos = null;
         }}
-        onMouseLeave={() => { const s = state.current; s.dragId = null; s.isPanning = false; s.hovId = null; s.mouseDownPos = null; s.mouseGX = -9999; s.mouseGY = -9999; tipRef.current?.classList.remove('on'); }}
+        onMouseLeave={() => { const s = state.current; s.dragId = null; s.isPanning = false; s.hovId = null; s.mouseDownPos = null; s.mouseGX = -9999; s.mouseGY = -9999; }}
         onTouchStart={e => {
           const s = state.current; const rect = canvasRef.current!.getBoundingClientRect();
           if (e.touches.length === 2) { const t1 = e.touches[0], t2 = e.touches[1]; s.pinchDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY); s.isPanning = false; return; }
@@ -311,7 +304,6 @@ export default function GraphView({ photos, visible, onClickCat, onClickPhoto }:
           s.isPanning = false; s.mouseDownPos = null;
         }}
       />
-      <div ref={tipRef} className="graph-tip"><div className="gt-t" /><div className="gt-tg" /></div>
     </div>
   );
 }
