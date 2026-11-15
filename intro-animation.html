@@ -1,0 +1,302 @@
+<title>Portfolio Intro Animation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Sans+TC:wght@300;400;500&display=swap">
+<style>
+  :root {
+    --bg: #000; --fg: #e8e4de; --dim: #8a7e72; --acc: #c8956c;
+    --mono: 'JetBrains Mono', monospace;
+    --serif: 'Cormorant Garamond', serif;
+    --tc: 'Noto Sans TC', sans-serif;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { color-scheme: dark } }
+  :root[data-theme="light"] { color-scheme: dark }
+
+  html, body { height: 100%; overflow: hidden }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--mono);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .intro {
+    position: fixed; inset: 0; z-index: 100; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    perspective: 800px; overflow: hidden;
+    opacity: 1; transition: opacity 1s ease;
+  }
+  .intro.done { opacity: 0; pointer-events: none }
+
+  /* Photo grid */
+  .grid-wrap {
+    position: absolute; inset: -10%; /* overflow for rotation */
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+    gap: 3px;
+    transform: rotateX(2deg) rotateY(-1deg) scale(1.05);
+    transform-style: preserve-3d;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .grid-wrap.show { opacity: 1 }
+  .grid-wrap.zoom {
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease 0.6s;
+    transform: rotateX(0) rotateY(0) scale(2.5);
+    opacity: 0;
+  }
+
+  .cell {
+    background-size: cover; background-position: center;
+    position: relative; overflow: hidden;
+    opacity: 0;
+  }
+  .cell::after {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(0,0,0,0.15);
+  }
+
+  /* Center text overlay */
+  .title-layer {
+    position: absolute; z-index: 10;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+  .title-name {
+    font-family: var(--serif); font-weight: 300;
+    font-size: clamp(36px, 8vw, 80px);
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--fg); opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    text-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 120px rgba(0,0,0,0.6);
+  }
+  .title-name.show { opacity: 1; transform: scale(1) }
+
+  .title-sub {
+    font-family: var(--mono); font-size: clamp(8px, 1.4vw, 11px);
+    letter-spacing: 0.6em; text-transform: uppercase;
+    color: var(--acc); margin-top: 12px; opacity: 0;
+    transition: opacity 0.6s ease 0.3s;
+    text-shadow: 0 0 30px rgba(0,0,0,0.8);
+  }
+  .title-sub.show { opacity: 1 }
+
+  /* Flash */
+  .flash {
+    position: absolute; inset: 0; z-index: 5;
+    background: #fff; opacity: 0; pointer-events: none;
+  }
+
+  /* Vignette */
+  .vignette {
+    position: absolute; inset: 0; z-index: 3; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+    opacity: 0; transition: opacity 0.8s ease;
+  }
+  .vignette.show { opacity: 1 }
+
+  /* Scanline */
+  .scanline {
+    position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(255,255,255,0.006) 2px, rgba(255,255,255,0.006) 4px
+    );
+  }
+
+  /* Replay */
+  .replay {
+    position: fixed; bottom: max(24px, env(safe-area-inset-bottom, 0px));
+    right: max(24px, env(safe-area-inset-right, 0px));
+    z-index: 200; font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--dim); background: rgba(255,255,255,0.06);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    padding: 8px 16px; cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .replay:hover { color: var(--fg); border-color: rgba(255,255,255,0.25) }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+<div class="intro" id="intro">
+  <div class="grid-wrap" id="gridWrap"></div>
+  <div class="vignette" id="vignette"></div>
+  <div class="scanline"></div>
+  <div class="flash" id="flash"></div>
+  <div class="title-layer">
+    <div class="title-name" id="titleName">Tony Hou</div>
+    <div class="title-sub" id="titleSub">Photography</div>
+  </div>
+</div>
+<button class="replay" id="replayBtn" hidden>Replay</button>
+
+<script>
+// All portfolio blur thumbnails
+const PHOTOS = [
+  "data:image/webp;base64,UklGRq4AAABXRUJQVlA4IKIAAADQBACdASoUABQAPzmUwVmvKicjqAgB4CcJQBkasS6CsuwHG4MtUpS22t//xYB5kAD+aPQ+fSj5IqmQv4b3t0HT3YiMZYmVIyiLa/9PSPk/Xez6nli2j1TKBvWIy9T9CfQ3B1ZlqNgBwEYQv+f3Ju/yKqAD/BGFXKKVNKCoXuJZrVUphqxI8ITB/lh3iRmWlvyYP9rQE6paV/7ryMYdNWfoAAA=",
+  "data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAADwBACdASoUABQAPzmUwFmvKiajqAgB4CcJZQDJEy67ooQjwrH0xn6xRLFsv/DPNgAA/OS7K+9Hqn3vg1wLPf2ghQGH/0RZkt1scVK7uOv3065ysXnU2EMCBkpZUFx2uaDUDVAUBteOFt3DCMjkpS/bGlEWOhA++jgA8uiyNXp7/8SpyBNXgdoHXvykxwZpikiuBp+nX4heaoFozkKBd3tBU6B/IeegAAA=",
+  "data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAAAQBQCdASoUABQAPzmSwFmvKaajqAgB4CcJQBdgMZFNfIiUWOI7vHmi6w7+IGtkerYYAPpzlJ7ePGRk+f6FkbO3ELi1yvEtFjjaozEY/bIDY9QwcYiMLRt0294Dp0tozanvIF67T5dAs/TEiWbQfbu6AWH/CdOpcbkDOs6b1uhh0ZQBMYpRxiQLdx72zK7r/vP2P+gFbRiVm1rSuRBPmxJcjTCiYRQZgIO9cgAA",
+  "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADQBACdASoUABQAPzmUwVmvKicjqAgB4CcJYwC7AA9iqV/0wLJAHlRqIK4z8H0ORAD+U/hsNaX8mnI0qDmjNYkRvpuKEW8xK6ZzvFJBqawAZ7TAYGMU8PZJnBbAfMDQb73dra2Yqm7c0ui5hGnjz/96l4VFP4XMUdGVRq+j+BWTrVLwT10l3sd4N7Ancu4jN43TTvflONAxUMmgSAA=",
+  "data:image/webp;base64,UklGRsoAAABXRUJQVlA4IL4AAAAwBQCdASoUABQAPzmWwlmvKqcjqAgB4CcJZACdMuu8qBS4zEnLfGmqo8HJ4uLdPgA68AD8YgfTUKctwsaVXi/eAPGuxtbKybDANGAeqQBrOhKMfHOw+qmkAnm4kpL3kQvLgcJDrsrtgR8LW6RILLcvQ4jJ4nEFjnKFJKCkDdUHE0GHDpIGa1YfxvDZe0RvlA2Jo/WIZFe5KII0pdBG/xJfXsu1w57ynWcwVlFJ46ER5p5tsx4sUbzJRu6RLAAA",
+  "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAAAQBQCdASoUABQAPzmUwFmvKiajqAgB4CcJZgCdIUaBcyiWkzyoRdhsN3D7N/D9vxtAAPKSmkDUBOZ3W6jRq83eq9gU4szKCMOQPywLd1AUZ2/nHr1mna0QXruJIVQAlqMiY7kU151hlvIj7ThCZUbZfCXPT6echBEX0t/QyJr0E2GwDaGcm6L7naV8RZI2KPOnwdzNybaH4m8HfvAsqI0NSTE52qe3qaw5LxZyeoCDQ5KzvbI6kmJzd8NGX4vfquAU1mX/Y4yf0QAA",
+  "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwBACdASoUABQAPzmUwFmvKiajqAgB4CcJZgCdM1XBqAwQ4ce9bOGeWfyYROIjiYAA9qoZgNhw9mSd1y+hthd5pEX/9PYEEg7R9/Xc3aGOtuFA1H6W4FyOu8AxsUZOVOA8oj3YFOKS0AAA",
+  "data:image/webp;base64,UklGRr4AAABXRUJQVlA4ILIAAAAQBQCdASoUABQAPzmUwFmvKiajqAgB4CcJQBYj6rg0l8Ptv4tF4mAHqRAwxEAA/SZ8SqbDWtETWP3T5qMMBZ3UlHcLKuIVlbRz3txi1f3IY2dfiKmecrV4Mx2Sy2/ZnLi63HhT6+a1yOUcwm/UgHkmKSMDpTXHl/d8uEhlxsJtU5whjhV93XL8BhItE0Lf7TuNeN2eBnGzlZZJmuxMNhx+P3FMQOvKSHRWnBFwHfEbgKwA",
+  "data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAAAQBgCdASoUABQAPzmUwVmvKicjqAgB4CcJagCxHuN/d6nXge8wWhtm9qnzDjJgXxqgb/5OS1wtYagA/GjuITOlCGGL3lYUs3/ldBcPjSg6owiABByDPame/C9TB8Iz/8caP+afOpuK7EqdnEqoiRNwBhfYOUi2r6g6vkzoe+VKRhi8Vr/yR05sVk0AoUAKn2uILu3lbB6SJVnMk6Z8DZeCMIjhqpNwrWLZbkM5QqFmKsEtPAhD/AAA",
+  "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADQBACdASoUABQAPzmSv1mvKaajqAgB4CcJQBibAbEaGG2w252xUMfiBqgkln4wAAD+r9siF0Qj2nQxPrT7rV7i1gumMgIpzdw4/Vekd2UDhOUv0QcSEekYqbeR4KMh4/PMmHLhv4fSMYkDOkvPOkp0OsLPi5FGF+e8Xm2Lvl4BdgYs/2USAFezfakpf1BMSMSdZAq4KLfE9mAAAAA=",
+  "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAQBQCdASoUABQAPzmMuVavKSUjqA1R4CcJYwC7MkCL/gFmZ4FAbCguVrQZZs9izOgAAP7oxl2/CODAf5TIPNozFr/K44SGxQNevb2Z7BTQGx9HZuhHb7MNFr9Tv05WO0JyiS0aC2qj0rHBJCbIUPcnLMlYuLW7v1Q8Q+457EunPWOJARAAAA==",
+  "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAADwBACdASoUABQAPzmUwVmvKicjqAgB4CcJQBecAdf85KQvsLpIOwQFVZc9F/W5uAAA3ieLlSNl6X2HwR9LBMnfrYnR8x6vZrCJHOcIi23P7SZNs9QBh1fs0jfyF0CuDb9DTyM5ydxvIK+I4rCOqnZfoHiqqFKG1ftNrHw2e71OPCd6NhC9PY0qxTYcTK1cqfAAAA==",
+  "data:image/webp;base64,UklGRqQAAABXRUJQVlA4IJgAAABwBACdASoUABQAPzmUwVmvKicjqAgB4CcJZQAAKEHw4pXdmpjIOVfM9oQzYAD+40WkLi1TQ2JAlgWk6g5JJA1fCWlhY/RSWH6k9DD8PIxC0NPZRgVvao8Wh+mVxZmAu38+m6yICEWsmb2lDyZTYZr6c18/c1YC19RhvW2WkGU3wVJ5BQqVlNaOiWruSWG5XLrZpar4kHAAAA==",
+  "data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAABQBQCdASoUABQAPzmUwVmvKicjqAgB4CcJZwDO7BEcPwPrAvtgy/6LIayPVEIbHuunDIAA/uvuQ4jY+ORrOrLD0upi8xPpPNP65tyKKEha6S/R9WR55s8SHbR+uxB4Qo0QSx1hmiu3MKPZW3SQKdFfKXwx8eg62lDwJxtyzPr0HKuG3Q3GQ4HWOGgAAA==",
+  "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAACQBACdASoUABQAPzmGulOvKSWisAgB4CcJYwDN71yB0a1kZ+2coMXBkDenSAAA/uvMZ+VLZ4yF1ouhRPVP8EX6Kyhm5OcQuRInmujLBgB5xyRu2jMGLwZpqO0AAA==",
+  "data:image/webp;base64,UklGRlgAAABXRUJQVlA4IEwAAADQAwCdASoUABQAPzmIulOvKSWisAgB4CcJZwAAW+qvufHbaiEa/wAA/uvNwTRlw1VGg7CtO7sUkliPZ/CoU1XEWdzhO7gPEQ6oAAAA",
+  "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADQBACdASoUABQAPyWAs1OuKKSit/qoAcAkiUAW/V5BD76j/v9ik40UWrpY6kR0wAD+8MFO6LFiK+QCe48Q+dbQSXE34QOA2sZUuVydc21V5sju0OW/o+wa/7lsMGWRkOukK0RHv9CA7kAA",
+  "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAAAQBQCdASoUABQAPzmUwlovKickKAgB4CcJYwDKAA9qrcSG1BxVGQpNBbxc4zDrWU/IAP6+B/TRZy8qgwg/YG1dVZqg3wOJ8KXODolvChBAObV/bdyiGgLphNpBronPwXYOxquxRPbAjZcUbKfzi9lAAAA=",
+  "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAACwBACdASoUABQAPzmUwFmvKaajqAgB4CcJQBOmUAA1Kbk3+4NI9OGpGKr9OfLAAP7YwZwIl9lnd1fqEgEkurZx/pYC4XfN8+93r4m9hKXcEjbHfPX2lm/1c+3gSUCR0/fSpry0A6hUBqu4GeDsB0YAfW72lEp3sgLWKPQFiSG/QAAA",
+  "data:image/webp;base64,UklGRrQAAABXRUJQVlA4IKgAAAAwBQCdASoUABQAPzmUwFmvKiajqAgB4CcJQBYdgcjRTe5WMUGOQmOqbB/+QeiuKREeAAD+0ZhD3KpRm9wKUs9jQBVbw+gii8BNQhu2kl2GfWMj93Hn+mRk7FmJoK8Y7mVwMYtn6BlJRLmxtCSNrB4bQC4t/TohvWzYjeh+0dExOiZDoiNAjfyY8ZQMDY91V+2FOAQv0QIz/tQEctpjwO0J4qO3gFKXKAA=",
+  "data:image/webp;base64,UklGRpYAAABXRUJQVlA4IIoAAACwBACdASoUABQAPzmQvVgvKaYjqAqp4CcJaAAAInCcKOnlPlyZq5OFDwdkp2UwAP6I1cNCKOmIdEZWoUzXdUjF6aOqI2sRDZ/vi0lsDeW36UiCOrrLaxIt3ZT90gQ8C3ftIAMO6/bILkFZpOaRWean9I8AHJ5IoMoI13+M0Pqva9QOfOXEDO74AAA=",
+  "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAADQBACdASoUABQAPzmUwVmvKicjqAgB4CcJQBkVP/wDzbkSdsL2jIxZZ8D4az9HAAD+698scYteak13JG3tiLxNQWY6CDYLf2LKeZ7HHzgKCgbjLi2OX3ukmUiNjvIZxEQgBzbCxP53Tp6vPq2z1hthzqkfAAXIXnXMxpW+87lbs+z1BuQYs09c/fb1REYftnJKzKemLinOFiOOatrL7lSRyN4TG/wA",
+  "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAABQBACdASoUABQAPzmUwFmvKiajqAgB4CcJYgC90AeiS3ze1MOkHnApiGsAAP4zIPf9aBFURkA+QdmNlQVrm0JODXTbf9Ux2GnEPDSF2sM4Qqry5H7rMuApsT1ROz18x8xecm0pF2AqU/cJXi1k89+N/2OYv31lr+kvLgH7EWUx6z9KxV2AewX+kRN+AAAA",
+  "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAADQBACdASoUABQAPzmUwVmvKicjqAgB4CcJZQDI1A9lzHvlvQp1pqmzCciSXrDGAAD+g73QypElZ3RDRj0DIixMS8Stf+nEki49YAjFrj3o7JuGFbzm5IVPHrsy67QP/SWX88ZDVWCkc2Mpl4wt350cqRj4Gwc07h7F3fJh1ikAAA=",
+  "data:image/webp;base64,UklGRs4AAABXRUJQVlA4IMIAAADwBACdASoUABQAPzmUwFmvKiajqAgB4CcJaADBDoMxgBJvQ2rCnCFwyqTbkH8kJaAAyXDopnC5Mk3X6PUY+k17T6cWI4ak9ZK7mVpqKF2e7MYIe5LNlHtAeD9tA9B+j9zFvEY3z18fGr6eHJRQbb/ner4LO/A2FsbiPuDkpMive9fyxez+i2SqTmbxSM9uGoDuRB2L0hT1QEO/Gc5u1gsSKmvlqS5lWhOE8bxmN6/R6JVSInkGMSTe3IZyhAiNw2AAAA==",
+  "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAADQBACdASoUABQAPzmOv1evKaajqAqp4CcJYwDJEBEVSHhXXOWAO6vZjllhW0EN7AD+rq3T4QzLoynvS50Tizo0/hk/9fG4BembCt+GqN9vL8/V8IqG93xRdXYjDefb5cGLC18ZUBZOhqOOJ2Oip2OTl+kF6EWSCeiyzykP0MiyAAAA",
+  "data:image/webp;base64,UklGRr4AAABXRUJQVlA4ILIAAAAQBQCdASoUABQAPzmUwFmvKiajqAgB4CcJQBcYa/gFWx1OT93sC7PrzkwcA/REO3dQAP5b0qnCyeJpOnvZyjnZUFJqJuClccPUS0r6NK9uAChODjc88KFxE1NObyRNDI2X9KbYAmFa9M1SJ5WEo199Tpcb6+uJIuUX58DUFBwDdE4KcAYaix3w79T3N+XbDr2h2WUtt6ka2lRk0eJ2z2B3w6OSLWewouIo30FyB5h5+AAA",
+  "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABQBQCdASoUABQAPzmSv1mvKaajqAgB4CcJZQDN/BF+DHni5oZza3HkNxVVxhpdkDRkC9AA/XH/JOJCh+nr5JmR+/Jc2kOM9OKgGz37nM+E5/pHZnLuv8PFXZDiVPlatTOoAC9mD2Zpmm4AdcrOPzUwAAA=",
+  "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAADwBACdASoUABQAPzmSv1mvKaYjqAgB4CcJQBdgtQAU0BrxVQUFxJwjomtD9j5B8AAA/loBuHKPkIrCMm/O02nGP8AfPmKZhooF8fdN14xSo4l6Dy4I155AzhTVjRa0QWbF1YY8BA/VhuYtQYLjo/vqTZI7vshn1+3CsfJgpXQ0vtXA4IzxO/KWabqlk4AAAAA=",
+  "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAACQBACdASoUABQAPzmSvlmvKaYjqAgB4CcJYgDLpBDM8ZI36QqZKjPDBj0sMcAA/ucgOPEI5abMCR3K3YdJn23pF4L+YRgDmKizbvWy5ZVCjEw30Nlwcc3AjbhFSs6DyzVVD5rxfgI988BvE/dixBG0zt75TUwMuhDj/78AcMgAAA==",
+];
+
+const W = window.innerWidth;
+const H = window.innerHeight;
+const COLS = W < 600 ? 5 : W < 1000 ? 7 : 9;
+const ROWS = W < 600 ? 7 : W < 1000 ? 5 : 6;
+const TOTAL = COLS * ROWS;
+
+const gridWrap = document.getElementById('gridWrap');
+gridWrap.style.setProperty('--cols', COLS);
+gridWrap.style.setProperty('--rows', ROWS);
+
+// Create cells
+const cells = [];
+for (let i = 0; i < TOTAL; i++) {
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.style.backgroundImage = `url(${PHOTOS[i % PHOTOS.length]})`;
+  gridWrap.appendChild(cell);
+  cells.push(cell);
+}
+
+// Shuffle helper
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function runIntro() {
+  const intro = document.getElementById('intro');
+  const flash = document.getElementById('flash');
+  const vignette = document.getElementById('vignette');
+  const titleName = document.getElementById('titleName');
+  const titleSub = document.getElementById('titleSub');
+  const replayBtn = document.getElementById('replayBtn');
+
+  // Reset
+  intro.classList.remove('done');
+  intro.style.opacity = '1';
+  gridWrap.classList.remove('show', 'zoom');
+  vignette.classList.remove('show');
+  titleName.classList.remove('show');
+  titleSub.classList.remove('show');
+  flash.style.opacity = '0';
+  replayBtn.hidden = true;
+  cells.forEach(c => { c.style.opacity = '0'; c.style.transition = 'none' });
+
+  // Phase 1: Cells appear one by one rapidly (0 - 1.5s)
+  const order = shuffle([...Array(TOTAL).keys()]);
+  const stagger = 1200 / TOTAL;
+
+  setTimeout(() => gridWrap.classList.add('show'), 100);
+
+  order.forEach((idx, i) => {
+    setTimeout(() => {
+      cells[idx].style.transition = 'opacity 0.15s ease';
+      cells[idx].style.opacity = '1';
+    }, 200 + i * stagger);
+  });
+
+  // Phase 2: Rapid photo cycling (0.8s - 3.5s)
+  let cycleIntervals = [];
+  setTimeout(() => {
+    cells.forEach((cell, i) => {
+      const speed = 80 + Math.random() * 120; // 80-200ms per swap
+      const delay = Math.random() * 300;
+      const interval = setTimeout(() => {
+        const iv = setInterval(() => {
+          const randPhoto = PHOTOS[Math.floor(Math.random() * PHOTOS.length)];
+          cell.style.backgroundImage = `url(${randPhoto})`;
+        }, speed);
+        cycleIntervals.push(iv);
+      }, delay);
+      cycleIntervals.push(interval);
+    });
+  }, 800);
+
+  // Phase 3: Flash + stop cycling (3.5s)
+  setTimeout(() => {
+    // Flash
+    flash.style.transition = 'opacity 0.06s ease';
+    flash.style.opacity = '0.8';
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.4s ease';
+      flash.style.opacity = '0';
+    }, 80);
+
+    // Stop all cycling
+    cycleIntervals.forEach(id => { clearInterval(id); clearTimeout(id) });
+    cycleIntervals = [];
+  }, 3500);
+
+  // Phase 4: Vignette + darken cells + show title (3.6s)
+  setTimeout(() => {
+    vignette.classList.add('show');
+    cells.forEach(c => {
+      c.style.transition = 'opacity 0.8s ease';
+      c.style.opacity = '0.3';
+    });
+  }, 3600);
+
+  // Phase 5: Title appears (3.8s)
+  setTimeout(() => {
+    titleName.classList.add('show');
+    titleSub.classList.add('show');
+  }, 3800);
+
+  // Phase 6: Grid zooms in, everything fades (6s)
+  setTimeout(() => {
+    gridWrap.classList.add('zoom');
+  }, 6000);
+
+  // Phase 7: Intro disappears (7.2s)
+  setTimeout(() => {
+    intro.classList.add('done');
+    setTimeout(() => { replayBtn.hidden = false }, 800);
+  }, 7200);
+}
+
+// Start
+runIntro();
+
+document.getElementById('replayBtn').addEventListener('click', runIntro);
+</script>
