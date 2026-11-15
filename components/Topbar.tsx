@@ -16,6 +16,7 @@ export default function Topbar({ path, count, view, onToggle, onView, music, the
       </button>
       <div className="tb-sep" aria-hidden="true" />
       <div className="tb-path" dangerouslySetInnerHTML={{ __html: `${path} / <b>${count} photos</b>` }} />
+      <div className="tb-brand">TonyHOU</div>
       <div className="view-btns" role="group" aria-label="檢視模式">
         {music?.src && <MusicPlayer src={music.src} title={music.title} artist={music.artist} />}
         <div className="tb-sep" aria-hidden="true" />
