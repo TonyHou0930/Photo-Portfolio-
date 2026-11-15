@@ -55,8 +55,6 @@ html,body{background:var(--bg);color:var(--t1);font-family:var(--mono);overflow:
 
 /* Photo card — museum-style dynamic borders */
 .photo-card{cursor:pointer;position:relative;background:var(--frame);padding:12px;transition:background .4s,transform .15s ease}
-.photo-card::after{content:'';position:absolute;inset:0;box-shadow:0 8px 30px rgba(0,0,0,.18);opacity:0;transition:opacity .3s ease;pointer-events:none;z-index:0}
-.photo-card:hover::after{opacity:1}
 .photo-card:active{transform:scale(.97)}
 .photo-card.pc-portrait{padding:6px 48px}
 .photo-card.pc-cine{padding:40px 6px}
