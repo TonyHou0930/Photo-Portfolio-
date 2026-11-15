@@ -17,7 +17,16 @@ type ViewMode = 'gallery' | 'graph' | 'camera' | 'map';
 
 function ClickTitle({ target, active, fallback }: { target: string; active: boolean; fallback: string }) {
   const text = useScrambleText(target, active);
-  return <>{text || fallback}</>;
+  const display = text || fallback;
+  return (
+    <>
+      {target.split('').map((ch, i) => (
+        <span key={i} style={{ width: ch === ' ' ? '.3em' : '1.1em' }}>
+          {display[i] ?? ch}
+        </span>
+      ))}
+    </>
+  );
 }
 
 export default function HomeClient({ data }: { data: PortfolioData }) {
