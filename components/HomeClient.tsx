@@ -17,8 +17,8 @@ type ViewMode = 'gallery' | 'graph' | 'camera' | 'map';
 
 function charWidth(ch: string) {
   if (ch === ' ') return '.3em';
-  if (/[一-鿿㐀-䶿]/.test(ch)) return '1.1em';
-  return '0.6em';
+  if (/[⺀-鿿　-〿＀-￯]/.test(ch)) return '1.1em';
+  return '0.75em';
 }
 
 function ClickTitle({ target, active, fallback }: { target: string; active: boolean; fallback: string }) {
