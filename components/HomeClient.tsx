@@ -266,24 +266,29 @@ export default function HomeClient({ data }: { data: PortfolioData }) {
     setFilter({ type: 'cat', value: cat }); setView('gallery');
   }, [projects, openSeries, allPhotos]);
 
-  if (!projects.length) return (
-    <div className="shell">
-      <div className="empty">
-        <div className="empty-icon">◈</div>
-        <div className="empty-text">No projects yet</div>
-        <div className="empty-sub">Edit <code>data/photos.json</code> to add your projects</div>
+  if (!projects.length) {
+    return (
+      <div className="shell">
+        <div className="empty">
+          <div className="empty-icon">◈</div>
+          <div className="empty-text">No projects yet</div>
+          <div className="empty-sub">Edit <code>data/photos.json</code> to add your projects</div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
     <div className="shell">
       {!seriesProject && (
-        <Sidebar collapsed={sbOff} projects={projects} allPhotos={allPhotos}
-          filter={filter} onFilter={handleFilter} onHome={goHome} />
+        <>
+          <Sidebar collapsed={sbOff} projects={projects} allPhotos={allPhotos}
+            filter={filter} onFilter={handleFilter} onHome={goHome} onClose={() => setSbOff(true)} />
+          {!sbOff && <div className="sb-backdrop" onClick={() => setSbOff(true)} />}
+        </>
       )}
 
-      <div className="main-area">
+      <main className="main-area">
         {!seriesProject && (
           <Topbar path={pathLabel} count={filtered.length} view={view}
             onToggle={() => setSbOff(v => !v)} onView={handleView} music={currentMusic}
@@ -351,7 +356,7 @@ export default function HomeClient({ data }: { data: PortfolioData }) {
             </div>
           )}
         </div>
-      </div>
+      </main>
 
       {lbPhoto && (
         <Lightbox photo={lbPhoto} allPhotos={allPhotos} projects={projects}
@@ -368,7 +373,7 @@ export default function HomeClient({ data }: { data: PortfolioData }) {
               height: clickTransition.final.h,
               transformOrigin: '0 0',
             }}>
-            <img src={clickTransition.rect.src} alt="" className="click-img" />
+            <img src={clickTransition.rect.src} alt={clickTransition.title} className="click-img" />
           </div>
           <div className="click-title" style={{
             top: clickTransition.final.y + clickTransition.final.h + 28,

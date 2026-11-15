@@ -46,7 +46,7 @@ function BlurImage({ src, alt, blur }: { src: string; alt: string; blur?: string
   const [loaded, setLoaded] = useState(false);
   return (
     <div className="blur-wrap">
-      {blur && <img src={blur} alt="" className={`blur-bg${loaded ? ' out' : ''}`} aria-hidden />}
+      {blur && <img src={blur} alt="" className={`blur-bg${loaded ? ' out' : ''}`} aria-hidden="true" />}
       <img src={src} alt={alt} loading="lazy" className={`real-img${loaded ? ' in' : ''}`}
         onLoad={() => setLoaded(true)} />
     </div>
@@ -431,7 +431,7 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
         <div className={`sv-hero-slit${isRevealing ? ` sv-hero-slit-open ${heroIsPortrait ? 'slit-portrait' : 'slit-landscape'}` : ''}`}>
           <div className="sv-hero-blur-wrap">
             {coverPhoto?.blurDataURL && (
-              <img src={coverPhoto.blurDataURL} alt="" className={`sv-hero-blur${sharpLoaded ? ' sv-hero-blur-out' : ''}`} aria-hidden />
+              <img src={coverPhoto.blurDataURL} alt="" className={`sv-hero-blur${sharpLoaded ? ' sv-hero-blur-out' : ''}`} aria-hidden="true" />
             )}
             <img src={coverUrl} alt={project.title} className={sharpLoaded ? 'sv-hero-sharp' : ''}
               onLoad={() => setSharpLoaded(true)} />
@@ -441,7 +441,7 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
 
       <div className={`sv-body${isDone ? ' sv-body-show' : ''}`}>
         <div className="sv-sidebar">
-          <button className="sv-back" onClick={onClose}>← 回到攝影作品</button>
+          <button className="sv-back" onClick={onClose} aria-label="回到攝影作品"><span aria-hidden="true">←</span> 回到攝影作品</button>
           <h1 className="sv-title">{project.title}</h1>
           {project.year && <div className="sv-date">{project.year}</div>}
           {project.story && <div className="sv-story">{project.story}</div>}
@@ -476,7 +476,7 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
               <span className="sv-graph-label">知識圖譜</span>
               {onViewGraph && (
                 <button className="sv-graph-link" onClick={onViewGraph}>
-                  前往 →
+                  前往 <span aria-hidden="true">→</span>
                 </button>
               )}
             </div>
@@ -520,7 +520,7 @@ export default function SeriesView({ project, onClose, onPhotoClick, onViewGraph
           <div className="sv-graph-header">
             <span className="sv-graph-label">知識圖譜</span>
             {onViewGraph && (
-              <button className="sv-graph-link" onClick={onViewGraph}>前往 →</button>
+              <button className="sv-graph-link" onClick={onViewGraph}>前往 <span aria-hidden="true">→</span></button>
             )}
           </div>
           <MiniGraph photos={seriesPhotos} activeFile={activePhoto}

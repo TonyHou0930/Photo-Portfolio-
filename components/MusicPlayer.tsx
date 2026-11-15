@@ -77,7 +77,7 @@ export default function MusicPlayer({ src, title, artist }: MusicPlayerProps) {
     <div className="music-player" onClick={showSpotify ? undefined : toggle}>
       <div className={`mp-pulse${isActive ? ' active' : ''}`}>
         {showSpotify && spotify!.albumArt ? (
-          <img src={spotify!.albumArt} alt="" className="mp-album" />
+          <img src={spotify!.albumArt} alt="專輯封面" className="mp-album" />
         ) : (
           <div className="mp-dot" />
         )}

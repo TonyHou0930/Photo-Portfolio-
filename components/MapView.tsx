@@ -277,7 +277,7 @@ export default function MapView({ photos, visible, onFilter }: {
         }}>
           <div className="map-card-thumbs">
             {hovData.thumbs.map(url => (
-              <img key={url} src={url} alt="" className="map-card-thumb" />
+              <img key={url} src={url} alt={hovData.name} className="map-card-thumb" />
             ))}
           </div>
           <div className="map-card-name">{hovData.name}</div>

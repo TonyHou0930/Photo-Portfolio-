@@ -12,7 +12,7 @@ function BlurImage({ src, alt, blur, onAspect, priority, width, height }: {
   const [loaded, setLoaded] = useState(false);
   return (
     <div className="blur-wrap">
-      {blur && !priority && <img src={blur} alt="" className={`blur-bg${loaded ? ' out' : ''}`} aria-hidden />}
+      {blur && !priority && <img src={blur} alt="" className={`blur-bg${loaded ? ' out' : ''}`} aria-hidden="true" />}
       {width && height ? (
         <Image
           src={src} alt={alt}
@@ -87,7 +87,8 @@ function CoverCard({ project, onClick, priority }: { project: Project; onClick: 
 
   return (
     <div className="photo-card-wrap">
-      <div ref={cardRef} className={`photo-card${preAspect ? ' ' + preAspect : ''}`} onClick={handleClick}>
+      <div ref={cardRef} className={`photo-card${preAspect ? ' ' + preAspect : ''}`} onClick={handleClick} role="button" tabIndex={0} aria-label={project.title}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e as unknown as React.MouseEvent); } }}>
         <BlurImage src={coverUrl} alt={project.title} blur={blur} onAspect={handleAspect}
           priority={priority} width={coverPhoto?.width} height={coverPhoto?.height} />
         <div className="photo-chips">

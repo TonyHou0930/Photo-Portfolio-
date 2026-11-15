@@ -9,7 +9,7 @@ function SlitReveal({ photo, slitDir }: { photo: FlatPhoto; slitDir: string }) {
     <div className={`lb-slit lb-slit-open ${slitDir}`}>
       <div className="lb-hero-wrap">
         {photo.blurDataURL && (
-          <img src={photo.blurDataURL} alt="" className={`lb-hero-blur${sharpLoaded ? ' lb-hero-blur-out' : ''}`} aria-hidden />
+          <img src={photo.blurDataURL} alt="" className={`lb-hero-blur${sharpLoaded ? ' lb-hero-blur-out' : ''}`} aria-hidden="true" />
         )}
         <img src={photo.url} alt={photo.title} className={`lb-hero${sharpLoaded ? ' lb-hero-sharp' : ''}`}
           onLoad={() => setSharpLoaded(true)} />
